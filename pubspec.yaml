@@ -13,6 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_riverpod: ^2.4.9
   go_router: ^13.0.1
+  dbus: ^0.7.10
 
 dev_dependencies:
   flutter_test:
