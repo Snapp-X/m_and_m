@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,26 +30,26 @@ class SeasonControlProvider extends StateNotifier<SeasonState> {
     _timer = Timer(
       _timeoutToIdle,
       () {
-        print('timer expired');
+        log('timer expired');
         state = SeasonState.idle;
       },
     );
   }
 
   void idle() {
-    print('idle');
+    log('idle');
     state = SeasonState.idle;
     _timer?.cancel();
   }
 
   void interacted() {
-    print('interacted');
+    log('interacted');
     state = SeasonState.interacting;
     _startTimer();
   }
 
   void completed() {
-    print('completed');
+    log('completed');
     state = SeasonState.completed;
     _startTimer();
   }

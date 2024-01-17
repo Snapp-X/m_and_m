@@ -5,24 +5,29 @@ import 'package:m_and_m/src/core/presentation/provider/season_control_provider.d
 import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final seasonState = ValueNotifier<SeasonState>(SeasonState.idle);
+  final seasonNotifier = ValueNotifier<SeasonState>(SeasonState.idle);
   ref
-    ..onDispose(seasonState.dispose)
+    ..onDispose(seasonNotifier.dispose)
     ..listen(
       seasonControlProvider,
       (_, next) {
-        seasonState.value = next;
+        seasonNotifier.value = next;
       },
     );
 
   return GoRouter(
     initialLocation: const IdlePageRoute().location,
     routes: $appRoutes,
-    refreshListenable: seasonState,
+    refreshListenable: seasonNotifier,
     redirect: (context, state) {
-      if (seasonState.value.isIdle &&
+      var seasonState = seasonNotifier.value;
+      if (seasonState.isIdle &&
           state.uri.path != const IdlePageRoute().location) {
         return const IdlePageRoute().location;
+      }
+      if (seasonState.isInteracting &&
+          state.uri.path == const IdlePageRoute().location) {
+        return const MakePageRoute().location;
       }
 
       return null;
