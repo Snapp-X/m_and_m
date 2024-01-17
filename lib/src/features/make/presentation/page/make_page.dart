@@ -10,7 +10,7 @@ class MakePage extends StatelessWidget {
         title: const Text('Make'),
       ),
       body: const Center(
-        child: Text('Make'),
+        child: Text('This is the Make Page, We are testing season idle'),
       ),
     );
   }
