@@ -3,10 +3,16 @@
 from __future__ import print_function
 from datetime import datetime, timezone
 from gi.repository import GLib
+from board import SCL, SDA
 
 import dbus
 import dbus.service
 import dbus.mainloop.glib
+import time
+import busio
+
+from adafruit_motor import servo
+from adafruit_pca9685 import PCA9685
 
 usage = """
 Snapp ServoControllerService Started Successfully
@@ -45,4 +51,13 @@ if __name__ == '__main__':
 
     mainloop = GLib.MainLoop()
     print(usage)
+    
+    i2c = busio.I2C(SCL, SDA)
+
+    pca = PCA9685(i2c)
+
+    pca.frequency = 50
+
+    servo7 = servo.Servo(pca.channels[7])
+
     mainloop.run()
