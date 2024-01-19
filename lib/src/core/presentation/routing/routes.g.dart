@@ -8,7 +8,8 @@ part of 'routes.dart';
 
 List<RouteBase> get $appRoutes => [
       $idlePageRoute,
-      $makePageRoute,
+      $mixPageRoute,
+      $resultPageRoute,
     ];
 
 RouteBase get $idlePageRoute => GoRouteData.$route(
@@ -34,17 +35,41 @@ extension $IdlePageRouteExtension on IdlePageRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $makePageRoute => GoRouteData.$route(
-      path: '/make',
-      name: 'make',
-      factory: $MakePageRouteExtension._fromState,
+RouteBase get $mixPageRoute => GoRouteData.$route(
+      path: '/mix',
+      name: 'mix',
+      factory: $MixPageRouteExtension._fromState,
     );
 
-extension $MakePageRouteExtension on MakePageRoute {
-  static MakePageRoute _fromState(GoRouterState state) => const MakePageRoute();
+extension $MixPageRouteExtension on MixPageRoute {
+  static MixPageRoute _fromState(GoRouterState state) => const MixPageRoute();
 
   String get location => GoRouteData.$location(
-        '/make',
+        '/mix',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $resultPageRoute => GoRouteData.$route(
+      path: '/result',
+      name: 'result',
+      factory: $ResultPageRouteExtension._fromState,
+    );
+
+extension $ResultPageRouteExtension on ResultPageRoute {
+  static ResultPageRoute _fromState(GoRouterState state) =>
+      const ResultPageRoute();
+
+  String get location => GoRouteData.$location(
+        '/result',
       );
 
   void go(BuildContext context) => context.go(location);
