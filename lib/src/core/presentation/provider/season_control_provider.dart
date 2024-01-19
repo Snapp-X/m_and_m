@@ -10,10 +10,12 @@ final seasonControlProvider =
 
 enum SeasonState {
   idle,
+  started,
   interacting,
   completed;
 
   bool get isIdle => this == SeasonState.idle;
+  bool get isStarted => this == SeasonState.started;
   bool get isInteracting => this == SeasonState.interacting;
   bool get isCompleted => this == SeasonState.completed;
 }
@@ -40,6 +42,12 @@ class SeasonControlProvider extends StateNotifier<SeasonState> {
     log('idle');
     state = SeasonState.idle;
     _timer?.cancel();
+  }
+
+  void startSeason() {
+    log('startSeason');
+    state = SeasonState.started;
+    _startTimer();
   }
 
   void interacted() {
