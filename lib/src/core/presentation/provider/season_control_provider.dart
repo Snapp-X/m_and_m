@@ -61,4 +61,10 @@ class SeasonControlProvider extends StateNotifier<SeasonState> {
     state = SeasonState.completed;
     _startTimer();
   }
+
+  void reset() {
+    log('reset');
+    state = SeasonState.idle;
+    _timer?.cancel();
+  }
 }

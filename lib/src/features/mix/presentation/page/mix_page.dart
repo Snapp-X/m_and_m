@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
 
@@ -72,6 +73,14 @@ class MixPage extends ConsumerWidget {
                   ),
               ],
             ),
+            isBoxFull
+                ? ElevatedButton(
+                    onPressed: () {
+                      ResultPageRoute(candyBox).go(context);
+                    },
+                    child: const Text('Go to Result'),
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
       ),
