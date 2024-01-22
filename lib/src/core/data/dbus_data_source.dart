@@ -1,8 +1,11 @@
 import 'package:dbus/dbus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// TODO(payam): sync it with the python server
+
 final dBusDataSourceProvider = Provider<DBusDataSource>((ref) {
-  var dBusClient = DBusClient.session();
+  final dBusClient = DBusClient.session();
+
   return DBusDataSource(
     client: dBusClient,
     remoteObject: DBusRemoteObject(
