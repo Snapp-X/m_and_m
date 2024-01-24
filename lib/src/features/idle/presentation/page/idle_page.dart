@@ -9,24 +9,34 @@ class IdlePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Idle Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Tap to start the season!'),
-            const SizedBox(height: 16),
-            NueButton(
-              size: 200,
-              color: const Color(0xff24272C),
-              onPressed: () {
-                ref.read(seasonControlProvider.notifier).startSeason();
-              },
-              child: const Text('Start Season'),
+      backgroundColor: const Color(0xffFDCB08),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            colors: [
+              Color(0xffFDDC01),
+              Color(0xffFDCB08),
+            ],
+            radius: .5,
+            stops: [.4, 1],
+          ),
+        ),
+        child: Center(
+          child: NueButton(
+            size: 200,
+            color: const Color(0xff24272C),
+            onPressed: () {
+              ref.read(seasonControlProvider.notifier).startSeason();
+            },
+            child: const Text(
+              'Start',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.white70,
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
