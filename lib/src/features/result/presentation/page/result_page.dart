@@ -18,7 +18,7 @@ class ResultPage extends ConsumerWidget {
             children: [
               Text(
                 'You have ${candyBox.portions.length} candies',
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 16),
               Wrap(
