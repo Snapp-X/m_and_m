@@ -6,6 +6,8 @@ class NueButton extends StatefulWidget {
     required this.size,
     this.color,
     this.gradient,
+    this.holderGradient,
+    this.boxShadow,
     this.onPressed,
     this.child,
   }) : assert(color != null || gradient != null);
@@ -13,6 +15,8 @@ class NueButton extends StatefulWidget {
   final double size;
   final Color? color;
   final List<Color>? gradient;
+  final List<Color>? holderGradient;
+  final List<BoxShadow>? boxShadow;
   final VoidCallback? onPressed;
   final Widget? child;
 
@@ -39,8 +43,6 @@ class _NueButtonState extends State<NueButton> {
       child: ValueListenableBuilder(
         valueListenable: _isPressed,
         builder: (context, isPressed, child) {
-          print('isPressed: $isPressed');
-
           return AnimatedContainer(
             duration: const Duration(milliseconds: 50),
             height: widget.size,
@@ -48,33 +50,37 @@ class _NueButtonState extends State<NueButton> {
             padding: const EdgeInsets.all(6.5),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.black12,
-                width: 1,
-              ),
-              gradient: const LinearGradient(
+              border: widget.holderGradient != null
+                  ? null
+                  : Border.all(
+                      color: Colors.black12,
+                      width: 1,
+                    ),
+              gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color(0xff2B2F33),
-                  Color(0xff101113),
-                ],
+                colors: widget.holderGradient ??
+                    const [
+                      Color(0xff2B2F33),
+                      Color(0xff101113),
+                    ],
               ),
               boxShadow: !isPressed
-                  ? const [
-                      BoxShadow(
-                        color: Colors.black54,
-                        offset: Offset(18, 18),
-                        blurRadius: 36,
-                        spreadRadius: 0,
-                      ),
-                      BoxShadow(
-                        color: Colors.white10,
-                        offset: Offset(-18, -18),
-                        blurRadius: 36,
-                        spreadRadius: 0,
-                      ),
-                    ]
+                  ? widget.boxShadow ??
+                      const [
+                        BoxShadow(
+                          color: Colors.black54,
+                          offset: Offset(18, 18),
+                          blurRadius: 36,
+                          spreadRadius: 0,
+                        ),
+                        BoxShadow(
+                          color: Colors.white10,
+                          offset: Offset(-18, -18),
+                          blurRadius: 36,
+                          spreadRadius: 0,
+                        ),
+                      ]
                   : null,
             ),
             child: child,
