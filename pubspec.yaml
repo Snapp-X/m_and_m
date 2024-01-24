@@ -16,6 +16,8 @@ dependencies:
   dbus: ^0.7.10
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
+  neumorphic_ui: ^1.0.1
+  recase: ^4.1.0
 
 dev_dependencies:
   flutter_test:

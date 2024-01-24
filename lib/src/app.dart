@@ -14,6 +14,10 @@ class App extends ConsumerWidget {
       child: MaterialApp.router(
         title: 'M&M',
         routerConfig: appRouter,
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          fontFamily: 'SfProDisplay',
+        ),
       ),
     );
   }
