@@ -23,17 +23,14 @@ class IdlePage extends ConsumerWidget {
         ),
         child: Center(
           child: NueButton(
-            color: const Color(0xffFDCB08),
+            color: const Color(0xff24272C),
             onPressed: () {
               ref.read(seasonControlProvider.notifier).startSeason();
-
-              // Navigator.of(context).pushNamed('/mix');
             },
             size: 200,
             child: const Text(
               'Tap to Start',
               style: TextStyle(
-                color: Color(0xff24272C),
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),

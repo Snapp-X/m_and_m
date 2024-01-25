@@ -110,26 +110,56 @@ class CandyButton extends StatelessWidget {
   }
 }
 
-class MixButton extends ConsumerWidget {
+class MixButton extends ConsumerStatefulWidget {
   const MixButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final candyBox = ref.watch(candyMixerProvider);
-    final isBoxFull = ref.watch(candyBoxIsFullProvider);
+  ConsumerState<ConsumerStatefulWidget> createState() => _MixButtonState();
+}
 
-    print(candyBox.portions.values.map((e) => e.color).toList());
+class _MixButtonState extends ConsumerState<MixButton>
+    with TickerProviderStateMixin {
+  late final ProgressAnimationController _progressAnimationController;
+
+  @override
+  void initState() {
+    super.initState();
+    print('Mix Button init');
+
+    _progressAnimationController = ProgressAnimationController(vsync: this);
+
+    _progressAnimationController.moveOutController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        onProcessCompleted();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _progressAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(candyMixerProvider, (previous, next) {
+      _progressAnimationController.addColor(next.portions.values.last.color);
+    });
+
+    // final isBoxFull = ref.watch(candyBoxIsFullProvider);
 
     return SizedBox(
       width: 200,
       height: 200,
       child: GradientProgress(
-        colors: candyBox.portions.values.map((e) => e.color).toList(),
-        duration: const Duration(seconds: 1),
+        controller: _progressAnimationController,
         child: NueButton(
           size: 200,
           color: const Color(0xff24272C),
-          onPressed: isBoxFull ? () {} : null,
+          onPressed: () {
+            _progressAnimationController.startMoveOutAnimation();
+          },
           child: Text(
             'Mix',
             style: TextStyle(
@@ -141,6 +171,10 @@ class MixButton extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void onProcessCompleted() {
+    print('onProcessCompleted');
   }
 }
 
