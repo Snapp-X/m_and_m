@@ -15,7 +15,7 @@ class MixPage extends ConsumerWidget {
       backgroundColor: const Color(0xff24272C),
       body: BodyHolder(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               'Dive into the M&M rainbow and handpick the hues that make your taste buds tango. Choose 4 times, feel free to double down on your faves, and and let the M&M magic unfold.',
@@ -60,12 +60,12 @@ class CandyWidget extends StatelessWidget {
     final candyImageName = 'assets/img/${candyColor.name}.png';
     return Column(
       children: [
-        Image.asset(
-          candyImageName,
-          width: 250,
-          height: 250,
-        ),
-        const SizedBox(height: 32),
+        // Image.asset(
+        //   candyImageName,
+        //   width: 250,
+        //   height: 250,
+        // ),
+        // const SizedBox(height: 32),
         CandyButton(
           color: candyColor,
           onPressed: onPressed,

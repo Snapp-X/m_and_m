@@ -22,7 +22,11 @@ class GradientProgress extends StatefulWidget {
 class _GradientProgressState extends State<GradientProgress>
     with TickerProviderStateMixin {
   Animation<double> get progressAnimation => _progressAnimation;
-  late CurvedAnimation _progressAnimation = _createCurve();
+  late CurvedAnimation _progressAnimation =
+      _createCurve(widget.controller.progressController);
+  Animation<double> get moveOutAnimation => _moveOutAnimation;
+  late CurvedAnimation _moveOutAnimation =
+      _createCurve(widget.controller.moveOutAnimation);
 
   Tween<double>? _progressValue;
 
@@ -50,7 +54,9 @@ class _GradientProgressState extends State<GradientProgress>
     super.didUpdateWidget(oldWidget);
     if (widget.progressAnimationCurve != oldWidget.progressAnimationCurve) {
       _progressAnimation.dispose();
-      _progressAnimation = _createCurve();
+      _progressAnimation = _createCurve(widget.controller.progressController);
+      _moveOutAnimation.dispose();
+      _moveOutAnimation = _createCurve(widget.controller.moveOutAnimation);
     }
   }
 
@@ -61,9 +67,9 @@ class _GradientProgressState extends State<GradientProgress>
     super.dispose();
   }
 
-  CurvedAnimation _createCurve() {
+  CurvedAnimation _createCurve(Animation<double> parent) {
     return CurvedAnimation(
-      parent: widget.controller.progressController,
+      parent: parent,
       curve: widget.progressAnimationCurve,
     );
   }
@@ -123,14 +129,14 @@ class _GradientProgressState extends State<GradientProgress>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: Listenable.merge([
-        widget.controller.moveOutController,
+        moveOutAnimation,
         progressAnimation,
       ]),
       builder: (context, child) {
         return CustomPaint(
           foregroundPainter: CircularPaint(
             progressValue: _progressValue!.evaluate(progressAnimation),
-            outgoingProgressValue: widget.controller.moveOutAnimation.value,
+            outgoingProgressValue: moveOutAnimation.value,
             borderThickness: 8,
             colors: _colorTweens
                 .where((element) => element.begin != null)
@@ -176,7 +182,7 @@ class ProgressAnimationController extends ChangeNotifier {
     this.colorLimit = 4,
     required TickerProviderStateMixin vsync,
     Duration progressAnimationDuration = const Duration(milliseconds: 700),
-    Duration moveOutAnimationDuration = const Duration(milliseconds: 700),
+    Duration moveOutAnimationDuration = const Duration(milliseconds: 3000),
   }) {
     _progressController = AnimationController(
       duration: progressAnimationDuration,
@@ -220,7 +226,7 @@ class ProgressAnimationController extends ChangeNotifier {
     assert(_colors.length == colorLimit,
         'Colors length must be equal to $colorLimit, Progress should be full to start move out animation');
 
-    if (_moveOutController.isAnimating) return;
+    if (!_moveOutController.isDismissed) return;
 
     _moveOutController
       ..value = 0.0
@@ -233,12 +239,6 @@ class ProgressAnimationController extends ChangeNotifier {
 double deg2rad(double deg) => deg * math.pi / 180;
 
 class CircularPaint extends CustomPainter {
-  /// ring/border thickness, default  it will be 8px [borderThickness].
-  final double borderThickness;
-  final double progressValue;
-  final double outgoingProgressValue;
-  final List<Color> colors;
-
   CircularPaint({
     this.borderThickness = 8.0,
     required this.progressValue,
@@ -246,11 +246,21 @@ class CircularPaint extends CustomPainter {
     required this.colors,
   })  : assert(progressValue >= 0 && progressValue <= 1),
         assert(outgoingProgressValue == 0 ||
-            (outgoingProgressValue >= 0 && progressValue == 1));
+            (outgoingProgressValue >= 0 && progressValue == 1)),
+        progressBarPaint = Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = borderThickness;
+
+  final double borderThickness;
+  final double progressValue;
+  final double outgoingProgressValue;
+  final List<Color> colors;
+  final Paint progressBarPaint;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (progressValue == 0) return;
+    if (progressValue == 0 || colors.isEmpty) return;
 
     Offset center = Offset(size.width / 2, size.height / 2);
 
@@ -260,30 +270,71 @@ class CircularPaint extends CustomPainter {
       height: size.height - 10,
     );
 
-    if (colors.isEmpty) return;
-
     final effectiveColors = [
       ...colors,
       colors.first,
     ];
 
-    Paint progressBarPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = borderThickness
-      ..shader = SweepGradient(
-        tileMode: TileMode.decal,
-        colors: effectiveColors,
-        transform: GradientRotation(deg2rad(-90)),
-      ).createShader(rect);
+    final fillOutValue =
+        convertRange(0, .5, 0, 1, outgoingProgressValue.clamp(0, .5));
 
-    canvas.drawArc(
-      rect,
-      deg2rad(90),
-      deg2rad(360 * progressValue),
-      false,
+    final outGoingValue =
+        convertRange(.5, 1, 0, 1, outgoingProgressValue.clamp(.5, 1));
+
+    progressBarPaint.shader = SweepGradient(
+      tileMode: TileMode.decal,
+      colors: effectiveColors,
+      transform: GradientRotation(deg2rad(90 + (360 * fillOutValue))),
+    ).createShader(rect);
+
+    final Path path = Path();
+
+    if (progressValue == 1 && outgoingProgressValue > 0) {
+      path.addArc(
+        rect,
+        deg2rad(90 + (360 * fillOutValue)),
+        deg2rad(360 - (360 * fillOutValue)),
+      );
+
+      final lineStartingPoint = Offset(
+        size.width / 2,
+        size.height - (borderThickness / 2) + (outGoingValue * 300),
+      );
+
+      path.moveTo(
+        lineStartingPoint.dx,
+        lineStartingPoint.dy,
+      );
+
+      path.lineTo(
+        lineStartingPoint.dx,
+        lineStartingPoint.dy + (300 * fillOutValue),
+      );
+    } else if (progressValue <= 1) {
+      path.addArc(
+        rect,
+        deg2rad(90),
+        deg2rad(360 * progressValue),
+      );
+    } else {
+      return;
+    }
+
+    canvas.drawPath(
+      path,
       progressBarPaint,
     );
+  }
+
+  double convertRange(
+    double originalStart,
+    double originalEnd,
+    double newStart,
+    double newEnd,
+    double value,
+  ) {
+    double scale = (newEnd - newStart) / (originalEnd - originalStart);
+    return (newStart + ((value - originalStart) * scale));
   }
 
   @override
