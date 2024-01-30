@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/routing/routes.dart';
+import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
 import 'package:m_and_m/src/core/presentation/widget/gradient_progress.dart';
 import 'package:m_and_m/src/core/presentation/widget/nue_button.dart';
 import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
@@ -14,7 +15,7 @@ class MixPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xff24272C),
-      body: BodyHolder(
+      body: BodyContainer(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -177,35 +178,5 @@ class _MixButtonState extends ConsumerState<MixButton>
     final candyBox = ref.read(candyMixerProvider);
 
     ResultPageRoute(candyBox).go(context);
-  }
-}
-
-class BodyHolder extends StatelessWidget {
-  const BodyHolder({
-    super.key,
-    required this.child,
-  });
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: Neumorphic(
-        style: NeumorphicStyle(
-          depth: 5,
-          intensity: 0.5,
-          boxShape: NeumorphicBoxShape.roundRect(
-            const BorderRadius.all(Radius.circular(50)),
-          ),
-          color: const Color(0xff24272C),
-          shadowLightColor: Colors.white24,
-          shadowDarkColor: Colors.black,
-        ),
-        margin: const EdgeInsets.all(30),
-        padding: const EdgeInsets.all(30),
-        child: child,
-      ),
-    );
   }
 }
