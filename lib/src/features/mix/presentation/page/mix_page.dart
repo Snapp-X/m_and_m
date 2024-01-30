@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/widget/gradient_progress.dart';
 import 'package:m_and_m/src/core/presentation/widget/nue_button.dart';
 import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
@@ -60,12 +61,13 @@ class CandyWidget extends StatelessWidget {
     final candyImageName = 'assets/img/${candyColor.name}.png';
     return Column(
       children: [
-        // Image.asset(
-        //   candyImageName,
-        //   width: 250,
-        //   height: 250,
-        // ),
-        // const SizedBox(height: 32),
+        const SizedBox(height: 32),
+        Image.asset(
+          candyImageName,
+          width: 200,
+          height: 200,
+        ),
+        const SizedBox(height: 32),
         CandyButton(
           color: candyColor,
           onPressed: onPressed,
@@ -124,8 +126,6 @@ class _MixButtonState extends ConsumerState<MixButton>
   @override
   void initState() {
     super.initState();
-    print('Mix Button init');
-
     _progressAnimationController = ProgressAnimationController(vsync: this);
 
     _progressAnimationController.moveOutController.addStatusListener((status) {
@@ -174,7 +174,9 @@ class _MixButtonState extends ConsumerState<MixButton>
   }
 
   void onProcessCompleted() {
-    print('onProcessCompleted');
+    final candyBox = ref.read(candyMixerProvider);
+
+    ResultPageRoute(candyBox).go(context);
   }
 }
 
