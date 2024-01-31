@@ -1,34 +1,36 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-class GradientProgress extends StatefulWidget {
-  const GradientProgress({
+class SpinOutProgress extends StatefulWidget {
+  const SpinOutProgress({
     super.key,
     required this.controller,
-    this.progressAnimationCurve = Curves.easeInOutQuad,
+    this.curve = Curves.easeInOutQuad,
     this.child,
   });
 
-  final ProgressAnimationController controller;
+  final SpinOutProgressController controller;
 
-  final Curve progressAnimationCurve;
+  final Curve curve;
 
   final Widget? child;
 
   @override
-  State<GradientProgress> createState() => _GradientProgressState();
+  State<SpinOutProgress> createState() => _SpinOutProgressState();
 }
 
-class _GradientProgressState extends State<GradientProgress>
+class _SpinOutProgressState extends State<SpinOutProgress>
     with TickerProviderStateMixin {
-  Animation<double> get progressAnimation => _progressAnimation;
-  late CurvedAnimation _progressAnimation =
-      _createCurve(widget.controller.progressController);
+  // animation is used to spin the progress
+  Animation<double> get spinAnimation => _spinAnimation;
+  late CurvedAnimation _spinAnimation =
+      _createCurve(widget.controller.spinController);
+
   Animation<double> get moveOutAnimation => _moveOutAnimation;
   late CurvedAnimation _moveOutAnimation =
       _createCurve(widget.controller.moveOutAnimation);
 
-  Tween<double>? _progressValue;
+  Tween<double>? _spinValueTween;
 
   late List<Color> _colors;
 
@@ -40,7 +42,7 @@ class _GradientProgressState extends State<GradientProgress>
 
     _colors = widget.controller.colors;
     _colorTweens = List.generate(
-      4,
+      widget.controller.colorLimit,
       (index) => ColorTween(begin: Colors.white38),
     );
 
@@ -50,11 +52,11 @@ class _GradientProgressState extends State<GradientProgress>
   }
 
   @override
-  void didUpdateWidget(GradientProgress oldWidget) {
+  void didUpdateWidget(SpinOutProgress oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.progressAnimationCurve != oldWidget.progressAnimationCurve) {
-      _progressAnimation.dispose();
-      _progressAnimation = _createCurve(widget.controller.progressController);
+    if (widget.curve != oldWidget.curve) {
+      _spinAnimation.dispose();
+      _spinAnimation = _createCurve(widget.controller.spinController);
       _moveOutAnimation.dispose();
       _moveOutAnimation = _createCurve(widget.controller.moveOutAnimation);
     }
@@ -62,7 +64,7 @@ class _GradientProgressState extends State<GradientProgress>
 
   @override
   void dispose() {
-    _progressAnimation.dispose();
+    _spinAnimation.dispose();
 
     super.dispose();
   }
@@ -70,27 +72,29 @@ class _GradientProgressState extends State<GradientProgress>
   CurvedAnimation _createCurve(Animation<double> parent) {
     return CurvedAnimation(
       parent: parent,
-      curve: widget.progressAnimationCurve,
+      curve: widget.curve,
     );
   }
 
   void _addListeners() {
-    widget.controller.addListener(() {
-      if (widget.controller.colors != _colors) {
-        _colors = widget.controller.colors;
+    widget.controller.addListener(
+      () {
+        if (widget.controller.colors != _colors) {
+          _colors = widget.controller.colors;
 
-        if (_constructTweens()) {
-          forEachTween((Tween<dynamic>? tween, dynamic targetValue,
-              TweenConstructor<dynamic> constructor) {
-            _updateTween(tween, targetValue);
-            return tween;
-          });
-          widget.controller.progressController
-            ..value = 0.0
-            ..forward();
+          if (_constructTweens()) {
+            forEachTween((Tween<dynamic>? tween, dynamic targetValue,
+                TweenConstructor<dynamic> constructor) {
+              _updateTween(tween, targetValue);
+              return tween;
+            });
+            widget.controller.spinController
+              ..value = 0.0
+              ..forward();
+          }
         }
-      }
-    });
+      },
+    );
   }
 
   bool _shouldAnimateTween(Tween<dynamic> tween, dynamic targetValue) {
@@ -102,7 +106,7 @@ class _GradientProgressState extends State<GradientProgress>
       return;
     }
     tween
-      ..begin = tween.evaluate(_progressAnimation)
+      ..begin = tween.evaluate(_spinAnimation)
       ..end = targetValue;
   }
 
@@ -130,17 +134,17 @@ class _GradientProgressState extends State<GradientProgress>
     return AnimatedBuilder(
       animation: Listenable.merge([
         moveOutAnimation,
-        progressAnimation,
+        spinAnimation,
       ]),
       builder: (context, child) {
         return CustomPaint(
-          foregroundPainter: CircularPaint(
-            progressValue: _progressValue!.evaluate(progressAnimation),
+          foregroundPainter: _SpinOutPainter(
+            spinProgressValue: _spinValueTween!.evaluate(spinAnimation),
             outgoingProgressValue: moveOutAnimation.value,
             borderThickness: 8,
             colors: _colorTweens
                 .where((element) => element.begin != null)
-                .map((e) => e.evaluate(progressAnimation)!)
+                .map((e) => e.evaluate(spinAnimation)!)
                 .toList(),
           ),
           child: child,
@@ -151,8 +155,8 @@ class _GradientProgressState extends State<GradientProgress>
   }
 
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _progressValue = visitor(
-      _progressValue,
+    _spinValueTween = visitor(
+      _spinValueTween,
       (_colors.length * .25),
       (dynamic value) => Tween<double>(begin: value as double),
     ) as Tween<double>?;
@@ -177,8 +181,8 @@ class _GradientProgressState extends State<GradientProgress>
   }
 }
 
-class ProgressAnimationController extends ChangeNotifier {
-  ProgressAnimationController({
+class SpinOutProgressController extends ChangeNotifier {
+  SpinOutProgressController({
     this.colorLimit = 4,
     required TickerProviderStateMixin vsync,
     Duration progressAnimationDuration = const Duration(milliseconds: 700),
@@ -200,13 +204,21 @@ class ProgressAnimationController extends ChangeNotifier {
   final List<Color> _colors = [];
   List<Color> get colors => _colors.toList();
 
-  Animation<double> get progressAnimation => progressController.view;
-  AnimationController get progressController => _progressController;
+  Animation<double> get progressAnimation => spinController.view;
+  AnimationController get spinController => _progressController;
   late final AnimationController _progressController;
 
   Animation<double> get moveOutAnimation => moveOutController.view;
   AnimationController get moveOutController => _moveOutController;
   late final AnimationController _moveOutController;
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _progressController.dispose();
+    _moveOutController.dispose();
+  }
 
   void addColor(Color color) {
     if (_colors.length >= colorLimit) return;
@@ -238,29 +250,32 @@ class ProgressAnimationController extends ChangeNotifier {
 
 double deg2rad(double deg) => deg * math.pi / 180;
 
-class CircularPaint extends CustomPainter {
-  CircularPaint({
+class _SpinOutPainter extends CustomPainter {
+  _SpinOutPainter({
     this.borderThickness = 8.0,
-    required this.progressValue,
+    this.spinProgressValue = 0,
     this.outgoingProgressValue = 0,
     required this.colors,
-  })  : assert(progressValue >= 0 && progressValue <= 1),
+  })  : assert(spinProgressValue >= 0 && spinProgressValue <= 1),
         assert(outgoingProgressValue == 0 ||
-            (outgoingProgressValue >= 0 && progressValue == 1)),
+            (outgoingProgressValue >= 0 && spinProgressValue == 1)),
         progressBarPaint = Paint()
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
           ..strokeWidth = borderThickness;
 
   final double borderThickness;
-  final double progressValue;
+  final double spinProgressValue;
   final double outgoingProgressValue;
+
+  final double outGoingMultiplier = 150;
+
   final List<Color> colors;
   final Paint progressBarPaint;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (progressValue == 0 || colors.isEmpty) return;
+    if (spinProgressValue == 0 || colors.isEmpty) return;
 
     Offset center = Offset(size.width / 2, size.height / 2);
 
@@ -275,11 +290,23 @@ class CircularPaint extends CustomPainter {
       colors.first,
     ];
 
-    final fillOutValue =
-        convertRange(0, .5, 0, 1, outgoingProgressValue.clamp(0, .5));
+    const startGoingOutPoint = .75;
 
-    final outGoingValue =
-        convertRange(.5, 1, 0, 1, outgoingProgressValue.clamp(.5, 1));
+    final fillOutValue = convertRange(
+      0,
+      startGoingOutPoint,
+      0,
+      1,
+      outgoingProgressValue.clamp(0, startGoingOutPoint),
+    );
+
+    final outGoingValue = convertRange(
+      startGoingOutPoint,
+      1,
+      0,
+      1,
+      outgoingProgressValue.clamp(startGoingOutPoint, 1),
+    );
 
     progressBarPaint.shader = SweepGradient(
       tileMode: TileMode.decal,
@@ -289,7 +316,7 @@ class CircularPaint extends CustomPainter {
 
     final Path path = Path();
 
-    if (progressValue == 1 && outgoingProgressValue > 0) {
+    if (spinProgressValue == 1 && outgoingProgressValue > 0) {
       path.addArc(
         rect,
         deg2rad(90 + (360 * fillOutValue)),
@@ -298,7 +325,9 @@ class CircularPaint extends CustomPainter {
 
       final lineStartingPoint = Offset(
         size.width / 2,
-        size.height - (borderThickness / 2) + (outGoingValue * 300),
+        size.height -
+            (borderThickness / 2) +
+            (outGoingValue * outGoingMultiplier),
       );
 
       path.moveTo(
@@ -308,13 +337,13 @@ class CircularPaint extends CustomPainter {
 
       path.lineTo(
         lineStartingPoint.dx,
-        lineStartingPoint.dy + (300 * fillOutValue),
+        lineStartingPoint.dy + (outGoingMultiplier * fillOutValue),
       );
-    } else if (progressValue <= 1) {
+    } else if (spinProgressValue <= 1) {
       path.addArc(
         rect,
         deg2rad(90),
-        deg2rad(360 * progressValue),
+        deg2rad(360 * spinProgressValue),
       );
     } else {
       return;
@@ -338,8 +367,8 @@ class CircularPaint extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CircularPaint oldDelegate) {
-    return oldDelegate.progressValue != progressValue ||
+  bool shouldRepaint(covariant _SpinOutPainter oldDelegate) {
+    return oldDelegate.spinProgressValue != spinProgressValue ||
         oldDelegate.borderThickness != borderThickness ||
         oldDelegate.outgoingProgressValue != outgoingProgressValue ||
         oldDelegate.colors != colors;

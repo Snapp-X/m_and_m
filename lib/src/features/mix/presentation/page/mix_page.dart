@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
-import 'package:m_and_m/src/core/presentation/widget/gradient_progress.dart';
+import 'package:m_and_m/src/core/presentation/widget/spin_out_progress.dart';
 import 'package:m_and_m/src/core/presentation/widget/nue_button.dart';
 import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
@@ -65,8 +65,8 @@ class CandyWidget extends StatelessWidget {
         const SizedBox(height: 32),
         Image.asset(
           candyImageName,
-          width: 200,
-          height: 200,
+          width: 170,
+          height: 170,
         ),
         const SizedBox(height: 32),
         CandyButton(
@@ -106,7 +106,7 @@ class CandyButton extends StatelessWidget {
     };
 
     return NueButton(
-      size: 110,
+      size: 90,
       onPressed: onPressed,
       gradient: gradientColors,
     );
@@ -122,12 +122,12 @@ class MixButton extends ConsumerStatefulWidget {
 
 class _MixButtonState extends ConsumerState<MixButton>
     with TickerProviderStateMixin {
-  late final ProgressAnimationController _progressAnimationController;
+  late final SpinOutProgressController _progressAnimationController;
 
   @override
   void initState() {
     super.initState();
-    _progressAnimationController = ProgressAnimationController(vsync: this);
+    _progressAnimationController = SpinOutProgressController(vsync: this);
 
     _progressAnimationController.moveOutController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -148,12 +148,10 @@ class _MixButtonState extends ConsumerState<MixButton>
       _progressAnimationController.addColor(next.portions.values.last.color);
     });
 
-    // final isBoxFull = ref.watch(candyBoxIsFullProvider);
-
     return SizedBox(
-      width: 200,
-      height: 200,
-      child: GradientProgress(
+      width: 170,
+      height: 170,
+      child: SpinOutProgress(
         controller: _progressAnimationController,
         child: NueButton(
           size: 200,

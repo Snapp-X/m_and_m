@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
-import 'package:m_and_m/src/core/presentation/widget/enter_gradient_progress.dart';
+import 'package:m_and_m/src/core/presentation/widget/spin_in_progress.dart';
 import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
 
 class ResultPage extends ConsumerWidget {
@@ -48,15 +48,13 @@ class QrCodeWidget extends StatefulWidget {
 
 class _QrCodeWidgetState extends State<QrCodeWidget>
     with TickerProviderStateMixin {
-  late final EnterGradientController _progressAnimationController;
+  late final SpinInProgressController _progressAnimationController;
   double qrCodeOpacity = 0;
 
   @override
   void initState() {
     super.initState();
-    print('Mix Button init');
-
-    _progressAnimationController = EnterGradientController(
+    _progressAnimationController = SpinInProgressController(
       vsync: this,
       colors: widget.candyBox.portions.values.map((e) => e.color).toList(),
     );
@@ -78,7 +76,7 @@ class _QrCodeWidgetState extends State<QrCodeWidget>
 
   @override
   Widget build(BuildContext context) {
-    return EnterGradientProgress(
+    return SpinInProgress(
       controller: _progressAnimationController,
       child: Container(
         width: 160,

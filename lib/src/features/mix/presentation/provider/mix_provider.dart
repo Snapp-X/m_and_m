@@ -8,10 +8,6 @@ final candyBoxIsFullProvider = StateProvider.autoDispose<bool>((ref) {
 final candyMixerProvider =
     StateNotifierProvider.autoDispose<CandyMixerNotifier, CandyBox>(
   (ref) {
-    ref.onDispose(() {
-      print('CandyMixerNotifier disposed');
-    });
-
     return CandyMixerNotifier();
   },
 );

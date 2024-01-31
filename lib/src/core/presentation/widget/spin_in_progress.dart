@@ -1,33 +1,33 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-class EnterGradientProgress extends StatefulWidget {
-  const EnterGradientProgress({
+class SpinInProgress extends StatefulWidget {
+  const SpinInProgress({
     super.key,
     required this.controller,
-    this.progressAnimationCurve = Curves.easeInOutQuad,
+    this.curve = Curves.easeInOutQuad,
     this.child,
   });
 
-  final EnterGradientController controller;
+  final SpinInProgressController controller;
 
-  final Curve progressAnimationCurve;
+  final Curve curve;
 
   final Widget? child;
 
   @override
-  State<EnterGradientProgress> createState() => _EnterGradientProgressState();
+  State<SpinInProgress> createState() => _SpinInProgressState();
 }
 
-class _EnterGradientProgressState extends State<EnterGradientProgress> {
+class _SpinInProgressState extends State<SpinInProgress> {
   Animation<double> get moveInAnimation => _moveInAnimation;
   late CurvedAnimation _moveInAnimation =
       _createCurve(widget.controller.moveInAnimation);
 
   @override
-  void didUpdateWidget(EnterGradientProgress oldWidget) {
+  void didUpdateWidget(SpinInProgress oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.progressAnimationCurve != oldWidget.progressAnimationCurve) {
+    if (widget.curve != oldWidget.curve) {
       _moveInAnimation.dispose();
       _moveInAnimation = _createCurve(widget.controller.moveInAnimation);
     }
@@ -43,7 +43,7 @@ class _EnterGradientProgressState extends State<EnterGradientProgress> {
   CurvedAnimation _createCurve(Animation<double> parent) {
     return CurvedAnimation(
       parent: parent,
-      curve: widget.progressAnimationCurve,
+      curve: widget.curve,
     );
   }
 
@@ -53,9 +53,8 @@ class _EnterGradientProgressState extends State<EnterGradientProgress> {
       animation: moveInAnimation,
       builder: (context, child) {
         return CustomPaint(
-          foregroundPainter: _EnterGradientPainter(
+          foregroundPainter: _SpinInPainter(
             enteringProgressValue: moveInAnimation.value,
-            borderThickness: 8,
             colors: widget.controller.colors,
           ),
           child: child,
@@ -66,8 +65,8 @@ class _EnterGradientProgressState extends State<EnterGradientProgress> {
   }
 }
 
-class EnterGradientController extends ChangeNotifier {
-  EnterGradientController({
+class SpinInProgressController extends ChangeNotifier {
+  SpinInProgressController({
     required List<Color> colors,
     required TickerProviderStateMixin vsync,
     Duration moveOutAnimationDuration = const Duration(milliseconds: 3000),
@@ -99,11 +98,10 @@ class EnterGradientController extends ChangeNotifier {
 
 double deg2rad(double deg) => deg * math.pi / 180;
 
-class _EnterGradientPainter extends CustomPainter {
-  _EnterGradientPainter({
+class _SpinInPainter extends CustomPainter {
+  _SpinInPainter({
     this.borderThickness = 8.0,
     this.enteringProgressValue = 0,
-    this.borderRadius = 32,
     required this.colors,
   })  : assert(enteringProgressValue >= 0 && enteringProgressValue <= 1),
         progressBarPaint = Paint()
@@ -113,7 +111,6 @@ class _EnterGradientPainter extends CustomPainter {
 
   final double borderThickness;
   final double enteringProgressValue;
-  final double borderRadius;
   final List<Color> colors;
 
   final Paint progressBarPaint;
@@ -152,7 +149,7 @@ class _EnterGradientPainter extends CustomPainter {
 
     final lineStartingPoint = Offset(
       size.width / 2,
-      0 - (300 - (300 * fillOutValue)),
+      -(300 - (300 * fillOutValue)),
     );
 
     path.moveTo(
@@ -170,6 +167,7 @@ class _EnterGradientPainter extends CustomPainter {
       double x2 = x / 2;
       double x4 = x / 4;
 
+      // Createing rounded rectangle path
       Path rectanglePath = Path()
         ..moveTo(x2, x)
         ..lineTo(x4, x)
@@ -211,7 +209,7 @@ class _EnterGradientPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _EnterGradientPainter oldDelegate) {
+  bool shouldRepaint(covariant _SpinInPainter oldDelegate) {
     return oldDelegate.borderThickness != borderThickness ||
         oldDelegate.enteringProgressValue != enteringProgressValue ||
         oldDelegate.colors != colors;
