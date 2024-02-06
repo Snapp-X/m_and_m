@@ -35,7 +35,7 @@ class ServoController(dbus.service.Object):
         return {0: str(servo0.angle), 1: str(servo1.angle), 2: str(servo2.angle), 3: str(servo3.angle)}
     
     @dbus.service.method("de.snapp.ServoControllerInterface",
-                         in_signature='i', out_signature='d')
+                         in_signature='i', out_signature='s')
     def CurrentMotorState(self, motor_id):
         print("CurrentMotorState request:", session_bus.get_unique_name())
         print("Motor ID:", motor_id)
@@ -60,6 +60,13 @@ class ServoController(dbus.service.Object):
             servo_motor.angle = 0
             
         return True
+    
+    # simple test method to check if the service is working
+    @dbus.service.method("de.snapp.ServoControllerInterface",
+                         in_signature='', out_signature='s')
+    def HelloWorld(self):
+        print("HelloWorld request:", session_bus.get_unique_name())
+        return "Hello, World!"
     
     @dbus.service.method("de.snapp.ServoControllerInterface",
                          in_signature='', out_signature='')
