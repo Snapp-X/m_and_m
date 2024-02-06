@@ -7,7 +7,9 @@ class NueButton extends StatefulWidget {
     this.color,
     this.gradient,
     this.holderGradient,
+    this.borderGradient,
     this.boxShadow,
+    this.innerShadow,
     this.onPressed,
     this.child,
   }) : assert(color != null || gradient != null);
@@ -16,7 +18,9 @@ class NueButton extends StatefulWidget {
   final Color? color;
   final List<Color>? gradient;
   final List<Color>? holderGradient;
+  final List<Color>? borderGradient;
   final List<BoxShadow>? boxShadow;
+  final List<BoxShadow>? innerShadow;
   final VoidCallback? onPressed;
   final Widget? child;
 
@@ -102,24 +106,26 @@ class _NueButtonState extends State<NueButton> {
               ),
             ),
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white12,
-                    Colors.black12,
-                  ],
+                  colors: widget.borderGradient ??
+                      [
+                        Colors.white12,
+                        Colors.black12,
+                      ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(6, 6),
-                    blurRadius: 12,
-                    spreadRadius: 0,
-                  ),
-                ],
+                boxShadow: widget.innerShadow ??
+                    const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        offset: Offset(6, 6),
+                        blurRadius: 12,
+                        spreadRadius: 0,
+                      ),
+                    ],
               ),
             ),
             Container(

@@ -20,7 +20,7 @@ enum SeasonState {
   bool get isCompleted => this == SeasonState.completed;
 }
 
-const _timeoutToIdle = Duration(seconds: 30);
+const _timeoutToIdle = Duration(minutes: 2);
 
 class SeasonControlProvider extends StateNotifier<SeasonState> {
   SeasonControlProvider() : super(SeasonState.idle);

@@ -35,35 +35,37 @@ class StartButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return NueButton(
       size: 200,
-      gradient: const [
-        Color(0xffffd302),
-        Color(0xffcfac02),
+      color: const Color(0xffFDDD02),
+      borderGradient: const [
+        Colors.white12,
+        Color(0xffFDCD08),
       ],
       holderGradient: const [
-        Color(0xffffd302),
-        Color(0xffcfac02),
+        Color(0xffFDCD08),
+        Color(0xffFEDD02),
       ],
-      boxShadow: const [
+      boxShadow: [
         BoxShadow(
-          color: Colors.black12,
-          offset: Offset(18, 18),
+          color: Colors.black.withOpacity(.05),
+          offset: const Offset(18, 18),
           blurRadius: 36,
           spreadRadius: 0,
         ),
-        BoxShadow(
+        const BoxShadow(
           color: Colors.white24,
           offset: Offset(-18, -18),
           blurRadius: 36,
           spreadRadius: 0,
         ),
       ],
+      innerShadow: const [],
       onPressed: () {
         ref.read(seasonControlProvider.notifier).startSeason();
       },
       child: const Text(
         'Start',
         style: TextStyle(
-          color: Colors.white70,
+          color: Colors.white54,
           fontSize: 36,
           fontWeight: FontWeight.w700,
         ),

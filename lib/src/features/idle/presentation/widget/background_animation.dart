@@ -16,10 +16,10 @@ final backgroundRiveProvider = FutureProvider<RiveFile>((ref) async {
 class BackgroundAnimation extends ConsumerStatefulWidget {
   const BackgroundAnimation({
     super.key,
-    required this.child,
+    this.child,
   });
 
-  final Widget child;
+  final Widget? child;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -51,6 +51,8 @@ class _BackgroundAnimationState extends ConsumerState<BackgroundAnimation> {
       },
       orElse: () => const SizedBox.shrink(),
     );
+
+    if (widget.child == null) return background;
 
     return Stack(
       children: [
