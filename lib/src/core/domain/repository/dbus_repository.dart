@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/data/dbus_data_source.dart';
 
@@ -11,33 +13,43 @@ class DBusRepository {
 
   final DBusDataSource dataSource;
 
-  Future<Map<int, double>> getMotorsState() async {
+  Future<bool> testServer() async {
+    final response = await dataSource.testServer();
+
+    log('DBusRepository.testServer: $response');
+
+    return true;
+  }
+
+  Future<Map<int, String>> getMotorsState() async {
     final response = await dataSource.getMotorsState();
 
-    return {};
+    final returnValue = response.returnValues[0];
+
+    final parsedResult = returnValue.toNative();
+
+    if (parsedResult is! Map) {
+      throw Exception('Invalid response');
+    }
+    
+    return parsedResult.map(
+      (key, value) => MapEntry(key, value),
+    );
   }
 
   Future<bool> turnRedMotor() async {
-    final response = await dataSource.turnRedMotor();
-
     return true;
   }
 
   Future<bool> turnBlueMotor() async {
-    final response = await dataSource.turnBlueMotor();
-
     return true;
   }
 
   Future<bool> turnYellowMotor() async {
-    final response = await dataSource.turnYellowMotor();
-
     return true;
   }
 
   Future<bool> turnGreenMotor() async {
-    final response = await dataSource.turnGreenMotor();
-
     return true;
   }
 }

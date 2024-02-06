@@ -1,7 +1,6 @@
 import 'package:dbus/dbus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// TODO(payam): sync it with the python server
 
 final dBusDataSourceProvider = Provider<DBusDataSource>((ref) {
   final dBusClient = DBusClient.session();
@@ -10,8 +9,8 @@ final dBusDataSourceProvider = Provider<DBusDataSource>((ref) {
     client: dBusClient,
     remoteObject: DBusRemoteObject(
       dBusClient,
-      name: 'de.snapp.MotorService',
-      path: DBusObjectPath('/Motor'),
+      name: 'de.snapp.ServoControllerService',
+      path: DBusObjectPath('/ServoController'),
     ),
   );
 });
@@ -24,54 +23,45 @@ class DBusDataSource {
 
   Future<DBusMethodSuccessResponse> getMotorsState() async {
     final response = await remoteObject.callMethod(
-      'de.snapp.InterfaceName',
-      'getMotorsState',
+      'de.snapp.ServoControllerInterface',
+      'CurrentMotorStates',
       [],
-      replySignature: DBusSignature('as'),
+      replySignature: DBusSignature('is'),
     );
 
     return response;
   }
 
-  Future<DBusMethodSuccessResponse> turnRedMotor() async {
+  Future<DBusMethodSuccessResponse> getMotorState(int motorId) async {
     final response = await remoteObject.callMethod(
-      'de.snapp.InterfaceName',
-      'turnRedMotor',
-      [],
-      replySignature: DBusSignature('as'),
+      'de.snapp.ServoControllerInterface',
+      'CurrentMotorState',
+      [
+        DBusInt32(motorId),
+      ],
+      replySignature: DBusSignature('s'),
     );
 
     return response;
   }
 
-  Future<DBusMethodSuccessResponse> turnBlueMotor() async {
+  Future<DBusMethodSuccessResponse> turnMotorInDegree(int motorId) async {
     final response = await remoteObject.callMethod(
-      'de.snapp.InterfaceName',
-      'turnBlueMotor',
-      [],
-      replySignature: DBusSignature('as'),
+      'de.snapp.ServoControllerInterface',
+      'TurnMotorInDegree',
+      [DBusInt32(motorId)],
+      replySignature: DBusSignature('b'),
     );
 
     return response;
   }
 
-  Future<DBusMethodSuccessResponse> turnYellowMotor() async {
+  Future<DBusMethodSuccessResponse> testServer() async {
     final response = await remoteObject.callMethod(
-      'de.snapp.InterfaceName',
-      'turnYellowMotor',
+      'de.snapp.ServoControllerInterface',
+      'HelloWorld',
       [],
-      replySignature: DBusSignature('as'),
-    );
-
-    return response;
-  }
-
-  Future<DBusMethodSuccessResponse> turnGreenMotor() async {
-    final response = await remoteObject.callMethod(
-      'de.snapp.InterfaceName',
-      'turnGreenMotor',
-      [],
-      replySignature: DBusSignature('as'),
+      replySignature: DBusSignature('s'),
     );
 
     return response;
