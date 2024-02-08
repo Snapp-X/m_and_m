@@ -1,7 +1,6 @@
 import 'package:dbus/dbus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 final dBusDataSourceProvider = Provider<DBusDataSource>((ref) {
   final dBusClient = DBusClient.session();
 
@@ -21,21 +20,24 @@ class DBusDataSource {
   final DBusClient client;
   final DBusRemoteObject remoteObject;
 
-  Future<DBusMethodSuccessResponse> getMotorsState() async {
+
+  Future<DBusMethodSuccessResponse> getAllMotorsState() async {
     final response = await remoteObject.callMethod(
       'de.snapp.ServoControllerInterface',
-      'CurrentMotorStates',
+      'GetAllMotorsState',
       [],
-      replySignature: DBusSignature('is'),
+      replySignature: DBusSignature('a{is}'),
     );
 
     return response;
   }
 
+  /// returns the state of the specified motor
+  /// the [motorId] is the id of the motor to get its state
   Future<DBusMethodSuccessResponse> getMotorState(int motorId) async {
     final response = await remoteObject.callMethod(
       'de.snapp.ServoControllerInterface',
-      'CurrentMotorState',
+      'GetMotorState',
       [
         DBusInt32(motorId),
       ],
@@ -45,10 +47,38 @@ class DBusDataSource {
     return response;
   }
 
-  Future<DBusMethodSuccessResponse> turnMotorInDegree(int motorId) async {
+  /// The motor will be throttled for the specified duration
+  /// the [motorId] is the id of the motor to throttle
+  /// the [duration] is the duration in seconds
+  ///
+  /// returns a [bool] indicating if the operation was successful
+  Future<DBusMethodSuccessResponse> throttleMotor(
+    int motorId,
+    int duration,
+  ) async {
     final response = await remoteObject.callMethod(
       'de.snapp.ServoControllerInterface',
-      'TurnMotorInDegree',
+      'ThrottleMotor',
+      [
+        DBusInt32(motorId),
+        DBusInt32(duration),
+      ],
+      replySignature: DBusSignature('b'),
+    );
+
+    return response;
+  }
+
+  /// Start throttling the motor without any specified duration
+  /// You will have to call [stopMotor] to stop the motor
+  ///
+  /// the [motorId] is the id of the motor to throttle
+  ///
+  /// returns a [bool] indicating if the operation was successful
+  Future<DBusMethodSuccessResponse> startThrottle(int motorId) async {
+    final response = await remoteObject.callMethod(
+      'de.snapp.ServoControllerInterface',
+      'StartThrottle',
       [DBusInt32(motorId)],
       replySignature: DBusSignature('b'),
     );
@@ -56,12 +86,29 @@ class DBusDataSource {
     return response;
   }
 
-  Future<DBusMethodSuccessResponse> testServer() async {
+  /// Stop throttling the motor
+  /// nothing will happen if the motor is not throttling
+  ///
+  /// the [motorId] is the id of the motor to stop throttling
+  ///
+  /// returns a [bool] indicating if the operation was successful
+  Future<DBusMethodSuccessResponse> stopThrottle(int motorId) async {
     final response = await remoteObject.callMethod(
       'de.snapp.ServoControllerInterface',
-      'HelloWorld',
+      'StopThrottle',
+      [DBusInt32(motorId)],
+      replySignature: DBusSignature('b'),
+    );
+
+    return response;
+  }
+
+  /// Close the DBus python session
+  Future<DBusMethodSuccessResponse> closeDBusSession() async {
+    final response = await remoteObject.callMethod(
+      'de.snapp.ServoControllerInterface',
+      'Exit',
       [],
-      replySignature: DBusSignature('s'),
     );
 
     return response;

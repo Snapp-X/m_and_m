@@ -6,9 +6,9 @@ part 'candy_box.g.dart';
 
 enum CandyColor {
   blue(Colors.blue),
-  red(Colors.red),
   yellow(Colors.yellow),
-  green(Colors.green);
+  green(Colors.green),
+  red(Colors.red);
 
   const CandyColor(this.color);
 
