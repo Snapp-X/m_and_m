@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
 import 'package:m_and_m/src/core/presentation/widget/spin_in_progress.dart';
-import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
+import 'package:m_and_m/src/core/domain/model/candy_box.dart';
+import 'package:m_and_m/src/features/result/presentation/provider/make_mix_provider.dart';
 
 class ResultPage extends ConsumerWidget {
   const ResultPage({super.key, required this.candyBox});
@@ -37,19 +40,20 @@ class ResultPage extends ConsumerWidget {
   }
 }
 
-class QrCodeWidget extends StatefulWidget {
+class QrCodeWidget extends ConsumerStatefulWidget {
   const QrCodeWidget({super.key, required this.candyBox});
 
   final CandyBox candyBox;
 
   @override
-  State<StatefulWidget> createState() => _QrCodeWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _QrCodeWidgetState();
 }
 
-class _QrCodeWidgetState extends State<QrCodeWidget>
+class _QrCodeWidgetState extends ConsumerState<QrCodeWidget>
     with TickerProviderStateMixin {
   late final SpinInProgressController _progressAnimationController;
-  double qrCodeOpacity = 0;
+
+  final ValueNotifier<bool> _isQrCodeVisible = ValueNotifier(false);
 
   @override
   void initState() {
@@ -76,6 +80,9 @@ class _QrCodeWidgetState extends State<QrCodeWidget>
 
   @override
   Widget build(BuildContext context) {
+    final mixResult = ref.watch(makeMixNotifierProvider);
+    log('makeMixNotifierProvider: $mixResult', name: 'ResultPage');
+
     return SpinInProgress(
       controller: _progressAnimationController,
       child: Container(
@@ -101,10 +108,16 @@ class _QrCodeWidgetState extends State<QrCodeWidget>
             )
           ],
         ),
-        child: AnimatedOpacity(
-          opacity: qrCodeOpacity,
-          duration: const Duration(milliseconds: 700),
-          curve: Curves.easeInOut,
+        child: ValueListenableBuilder(
+          valueListenable: _isQrCodeVisible,
+          builder: (context, isQrCodeVisible, child) {
+            return AnimatedOpacity(
+              opacity: isQrCodeVisible ? 1 : 0,
+              duration: const Duration(milliseconds: 700),
+              curve: Curves.easeInOut,
+              child: child,
+            );
+          },
           child: const Padding(
             padding: EdgeInsets.all(32.0),
             child: FlutterLogo(style: FlutterLogoStyle.stacked),
@@ -115,8 +128,7 @@ class _QrCodeWidgetState extends State<QrCodeWidget>
   }
 
   void onAnimationCompleted() {
-    setState(() {
-      qrCodeOpacity = 1;
-    });
+    _isQrCodeVisible.value = true;
+    ref.read(makeMixNotifierProvider.notifier).startMixing(widget.candyBox);
   }
 }

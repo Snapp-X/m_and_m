@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m_and_m/src/features/idle/presentation/page/idle_page.dart';
-import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
+import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/mix/presentation/page/mix_page.dart';
 import 'package:m_and_m/src/features/result/presentation/page/result_page.dart';
 

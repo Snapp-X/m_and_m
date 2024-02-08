@@ -3,7 +3,7 @@ import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
 import 'package:m_and_m/src/core/presentation/widget/spin_out_progress.dart';
 import 'package:m_and_m/src/core/presentation/widget/nue_button.dart';
-import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
+import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 import 'package:recase/recase.dart';
@@ -59,16 +59,16 @@ class CandyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final candyImageName = 'assets/img/${candyColor.name}.png';
+    // final candyImageName = 'assets/img/${candyColor.name}.png';
     return Column(
       children: [
-        const SizedBox(height: 32),
-        Image.asset(
-          candyImageName,
-          width: 170,
-          height: 170,
-        ),
-        const SizedBox(height: 32),
+        // const SizedBox(height: 32),
+        // Image.asset(
+        //   candyImageName,
+        //   width: 170,
+        //   height: 170,
+        // ),
+        // const SizedBox(height: 32),
         CandyButton(
           color: candyColor,
           onPressed: onPressed,
@@ -156,9 +156,7 @@ class _MixButtonState extends ConsumerState<MixButton>
         child: NueButton(
           size: 200,
           color: const Color(0xff24272C),
-          onPressed: () {
-            _progressAnimationController.startMoveOutAnimation();
-          },
+          onPressed: onMixButtonPressed,
           child: Text(
             'Mix',
             style: TextStyle(
@@ -170,6 +168,10 @@ class _MixButtonState extends ConsumerState<MixButton>
         ),
       ),
     );
+  }
+
+  void onMixButtonPressed() {
+    _progressAnimationController.startMoveOutAnimation();
   }
 
   void onProcessCompleted() {

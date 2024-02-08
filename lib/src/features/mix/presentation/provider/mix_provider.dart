@@ -1,9 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m_and_m/src/features/mix/domain/model/candy_box.dart';
-
-final candyBoxIsFullProvider = StateProvider.autoDispose<bool>((ref) {
-  return ref.watch(candyMixerProvider).portions.length == 4;
-});
+import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 
 final candyMixerProvider =
     StateNotifierProvider.autoDispose<CandyMixerNotifier, CandyBox>(
