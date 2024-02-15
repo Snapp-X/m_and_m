@@ -14,9 +14,12 @@ else
     sudo apt install python3 -y
 fi
 
+echo
 echo "Check and Install Required Pip Packages"
 echo
+
 REQUIRED_PKG=("adafruit-circuitpython-pca9685" "adafruit-circuitpython-servokit")
+
 echo "Checking and installing required pip packages..."
 for pkg in "${REQUIRED_PKG[@]}"; do
     if pip3 show "$pkg" &>/dev/null; then
