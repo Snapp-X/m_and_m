@@ -21,6 +21,8 @@ class DBusDataSource {
   final DBusRemoteObject remoteObject;
 
 
+  /// Get the state of all motors
+  /// returns a [Map] of motor id and its state
   Future<DBusMethodSuccessResponse> getAllMotorsState() async {
     final response = await remoteObject.callMethod(
       'de.snapp.ServoControllerInterface',
