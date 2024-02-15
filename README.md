@@ -1,5 +1,15 @@
 # m_and_m
 
+## Connecting Flutter to Hardware
+
+Integrating Flutter with hardware components in a project like the M&M Mixer presents multiple pathways. Options range from setting up an MQTT broker or a REST API to delving into the hardware's datasheet and crafting a complete Dart plugin specifically tailored for it. Each approach offers its unique advantages, catering to different project requirements and complexity levels.
+
+For the M&M Mixer, our choice to facilitate communication between the Flutter application and the Raspberry Pi's hardware modules was driven by a desire for efficiency and practicality. The PCA9685 servo driver, a critical component of our hardware setup, is supported by an excellent Python library that simplifies controlling the servo motors. To leverage this library, we decided to establish a Python D-Bus server. This approach allows us to utilize the existing Python library without the need to directly implement low-level control in Dart, streamlining the development process.
+
+### Why D-Bus?
+
+D-Bus offers a robust inter-process communication (IPC) mechanism, enabling separate processes to communicate with each other seamlessly. By creating a Python D-Bus server, we effectively expose the functionality of the PCA9685's Python library over D-Bus, making it accessible to other applications running on the same machine.
+
 ## Hardware
 
 The foundation of the M&M Mixer is its hardware, a meticulously designed setup that combines computational power with mechanical precision to dispense M&M candies. The construction process involved several key components:
