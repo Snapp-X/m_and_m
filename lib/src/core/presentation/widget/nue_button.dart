@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class NueButton extends StatefulWidget {
@@ -34,14 +36,17 @@ class _NueButtonState extends State<NueButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onPressed,
       onTapDown: (details) {
+        log('onTapDown');
         _isPressed.value = true;
       },
       onTapUp: (details) {
+        log('onTapUp');
         _isPressed.value = false;
+        widget.onPressed?.call();
       },
       onTapCancel: () {
+        log('onTapCancel');
         _isPressed.value = false;
       },
       child: ValueListenableBuilder(
@@ -49,6 +54,7 @@ class _NueButtonState extends State<NueButton> {
         builder: (context, isPressed, child) {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 50),
+            curve: Curves.easeOut,
             height: widget.size,
             width: widget.size,
             padding: const EdgeInsets.all(6.5),
