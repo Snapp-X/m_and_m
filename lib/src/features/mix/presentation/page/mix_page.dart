@@ -26,7 +26,7 @@ class MixPage extends ConsumerWidget {
                 child: Padding(
                   padding: EdgeInsets.only(left: 20),
                   child: SizedBox(
-                    width: 900,
+                    width: 840,
                     child: Text(
                       'Dive into the M&M rainbow and handpick the hues that make your taste buds tango. Choose 4 times, feel free to double down on your faves, and and let the M&M magic unfold.',
                       style: TextStyle(
@@ -175,7 +175,7 @@ class _MixButtonState extends ConsumerState<MixButton>
           child: Text(
             'Mix',
             style: TextStyle(
-              color: const Color(0xf17F8493).withOpacity(.2),
+              color: const Color(0xf17F8493).withOpacity(.7),
               fontSize: 36,
               fontWeight: FontWeight.w700,
             ),

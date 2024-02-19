@@ -28,7 +28,7 @@ class ResultPage extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color(0xf17F8493),
-                  fontSize: 24,
+                  fontSize: 30,
                   fontWeight: FontWeight.normal,
                 ),
               )
