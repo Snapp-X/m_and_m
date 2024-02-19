@@ -82,16 +82,16 @@ class _QrCodeWidgetState extends ConsumerState<QrCodeWidget>
   Widget build(BuildContext context) {
     final mixResult = ref.watch(makeMixNotifierProvider);
     log('makeMixNotifierProvider: $mixResult', name: 'ResultPage');
-
+// qr-code.png
     return SpinInProgress(
       controller: _progressAnimationController,
       child: Container(
-        width: 160,
-        height: 160,
+        width: 230,
+        height: 230,
         decoration: ShapeDecoration(
           color: const Color(0xFF24272C),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(42),
           ),
           shadows: const [
             BoxShadow(
@@ -113,14 +113,21 @@ class _QrCodeWidgetState extends ConsumerState<QrCodeWidget>
           builder: (context, isQrCodeVisible, child) {
             return AnimatedOpacity(
               opacity: isQrCodeVisible ? 1 : 0,
-              duration: const Duration(milliseconds: 700),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut,
               child: child,
             );
           },
-          child: const Padding(
-            padding: EdgeInsets.all(32.0),
-            child: FlutterLogo(style: FlutterLogoStyle.stacked),
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: Image.asset(
+                'assets/img/qr-code.png',
+                width: 220,
+                height: 220,
+              ),
+            ),
           ),
         ),
       ),

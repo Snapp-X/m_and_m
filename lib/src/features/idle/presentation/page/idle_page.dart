@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
 import 'package:m_and_m/src/core/presentation/widget/nue_button.dart';
+import 'package:m_and_m/src/features/idle/presentation/widget/background_animation.dart';
 // import 'package:m_and_m/src/features/idle/presentation/widget/background_animation.dart';
 
 class IdlePage extends ConsumerWidget {
@@ -22,7 +23,7 @@ class IdlePage extends ConsumerWidget {
             stops: [.4, 1],
           ),
         ),
-        child: const Center(child: StartButton()),
+        child: const BackgroundAnimation(child: Center(child: StartButton())),
       ),
     );
   }

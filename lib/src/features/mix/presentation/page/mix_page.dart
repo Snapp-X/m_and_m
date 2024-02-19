@@ -16,31 +16,45 @@ class MixPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: const Color(0xff24272C),
       body: BodyContainer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Dive into the M&M rainbow and handpick the hues that make your taste buds tango. Choose 4 times, feel free to double down on your faves, and and let the M&M magic unfold.',
-              style: TextStyle(
-                color: Color(0xf17F8493),
-                fontSize: 24,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                for (final color in CandyColor.values)
-                  CandyWidget(
-                    candyColor: color,
-                    onPressed: () {
-                      ref.read(candyMixerProvider.notifier).addCandy(color);
-                    },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 120.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: SizedBox(
+                    width: 900,
+                    child: Text(
+                      'Dive into the M&M rainbow and handpick the hues that make your taste buds tango. Choose 4 times, feel free to double down on your faves, and and let the M&M magic unfold.',
+                      style: TextStyle(
+                        color: Color(0xf17F8493),
+                        fontSize: 30,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
                   ),
-              ],
-            ),
-            const MixButton(),
-          ],
+                ),
+              ),
+              const SizedBox(height: 60),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (final color in CandyColor.values)
+                    CandyWidget(
+                      candyColor: color,
+                      onPressed: () {
+                        ref.read(candyMixerProvider.notifier).addCandy(color);
+                      },
+                    ),
+                ],
+              ),
+              const SizedBox(height: 40),
+              const MixButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -59,28 +73,19 @@ class CandyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final candyImageName = 'assets/img/${candyColor.name}.png';
+    final candyImageName = 'assets/img/${candyColor.name}_alt.png';
+
     return Column(
       children: [
-        // const SizedBox(height: 32),
-        // Image.asset(
-        //   candyImageName,
-        //   width: 170,
-        //   height: 170,
-        // ),
-        // const SizedBox(height: 32),
+        Image.asset(
+          candyImageName,
+          width: 220,
+          height: 220,
+        ),
+        const SizedBox(height: 50),
         CandyButton(
           color: candyColor,
           onPressed: onPressed,
-        ),
-        const SizedBox(height: 12),
-        Text(
-          candyColor.name.sentenceCase,
-          style: const TextStyle(
-            color: Color(0xf17F8493),
-            fontSize: 30,
-            fontWeight: FontWeight.normal,
-          ),
         ),
       ],
     );
@@ -96,6 +101,7 @@ class CandyButton extends StatelessWidget {
 
   final CandyColor color;
   final VoidCallback? onPressed;
+
   @override
   Widget build(BuildContext context) {
     final gradientColors = switch (color) {
@@ -106,9 +112,18 @@ class CandyButton extends StatelessWidget {
     };
 
     return NueButton(
-      size: 90,
+      size: 110,
       onPressed: onPressed,
       gradient: gradientColors,
+      child: Text(
+        color.name.sentenceCase,
+        style: const TextStyle(
+          color: Colors.white54,
+          fontSize: 26,
+          height: 1,
+          fontWeight: FontWeight.normal,
+        ),
+      ),
     );
   }
 }
