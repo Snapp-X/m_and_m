@@ -235,8 +235,8 @@ class SpinOutProgressController extends ChangeNotifier {
   }
 
   void startMoveOutAnimation() {
-    assert(_colors.length == colorLimit,
-        'Colors length must be equal to $colorLimit, Progress should be full to start move out animation');
+    if (_colors.length < colorLimit &&
+        _progressController.status == AnimationStatus.completed) return;
 
     if (!_moveOutController.isDismissed) return;
 
