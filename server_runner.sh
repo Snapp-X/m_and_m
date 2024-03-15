@@ -26,7 +26,7 @@ for pkg in "${REQUIRED_PKG[@]}"; do
         echo "$pkg is already installed."
     else
         echo "$pkg is not installed. Installing $pkg..."
-        sudo pip3 install "$pkg"
+        sudo pip3 install "$pkg" --break-system-packages
     fi
 done
 
