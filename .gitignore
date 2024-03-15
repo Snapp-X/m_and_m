@@ -32,10 +32,6 @@ migrate_working_dir/
 /build/
 pubspec.lock
 
-# all the generated files
-**/*.g.dart
-**/*.freezed.dart
-
 # Symbolication related
 app.*.symbols
 
