@@ -9,8 +9,7 @@ With step-by-step instructions for hardware assembly, software development, and 
 ## Hardware
 
 The foundation of the M&M Mixer is its hardware, a meticulously designed setup that combines computational power with mechanical precision to dispense M&M candies. The construction process involves several key components:
-
-- **Raspberry Pi 5 :**
+- **[Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/ "Raspberry Pi 5"):**
   The Raspberry Pi 5 (4Gb/8Gb) was chosen for its robust processing capabilities and affordability, making it the heart of our project. It controls the intricacies of the M&M Mixer, managing the flow of data and commands that orchestrate the candy dispensing process. A Raspberry Pi Model 4 B will work just fine as well.
 
 - **[PCA9685 - Adafruit 16-Channel 12-bit PWM/Servo Driver](https://www.adafruit.com/product/815 "PCA9685 - Adafruit 16-Channel 12-bit PWM/Servo Driver"):**
