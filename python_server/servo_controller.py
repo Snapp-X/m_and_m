@@ -65,7 +65,7 @@ class ServoController(dbus.service.Object):
         print("Motor ID:", motor_id)
         print("Duration:", duration)
         if 0 <= motor_id < len(self.servos):
-            self.servos[motor_id].throttle = 1
+            self.servos[motor_id].throttle = 0.5
             time.sleep(duration)
             self.servos[motor_id].throttle = 0.0
             time.sleep(0.1)
@@ -80,7 +80,7 @@ class ServoController(dbus.service.Object):
         print("Motor ID:", motor_id)
         if 0 <= motor_id < len(self.servos):
             time.sleep(0.03)
-            self.servos[motor_id].throttle = 1
+            self.servos[motor_id].throttle = 0.5
             time.sleep(0.03)
             return True
         else:
