@@ -49,8 +49,9 @@ class DBusRepository {
   /// the [duration] is the duration in seconds
   ///
   /// returns a [bool] indicating if the operation was successful
-  Future<bool> throttleMotor(int motorId, {int duration = 1}) async {
-    final response = await dataSource.throttleMotor(motorId, duration);
+  Future<bool> throttleMotor(int motorId,
+      {double duration = 0.5, double speed = 0.5}) async {
+    final response = await dataSource.throttleMotor(motorId, duration, speed);
 
     final returnValue = response.returnValues[0];
 

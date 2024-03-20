@@ -20,7 +20,6 @@ class DBusDataSource {
   final DBusClient client;
   final DBusRemoteObject remoteObject;
 
-
   /// Get the state of all motors
   /// returns a [Map] of motor id and its state
   Future<DBusMethodSuccessResponse> getAllMotorsState() async {
@@ -56,14 +55,16 @@ class DBusDataSource {
   /// returns a [bool] indicating if the operation was successful
   Future<DBusMethodSuccessResponse> throttleMotor(
     int motorId,
-    int duration,
+    double duration,
+    double speed,
   ) async {
     final response = await remoteObject.callMethod(
       'de.snapp.ServoControllerInterface',
       'ThrottleMotor',
       [
         DBusInt32(motorId),
-        DBusInt32(duration),
+        DBusDouble(duration),
+        DBusDouble(speed),
       ],
       replySignature: DBusSignature('b'),
     );

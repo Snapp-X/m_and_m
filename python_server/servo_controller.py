@@ -59,13 +59,14 @@ class ServoController(dbus.service.Object):
             return "Invalid motor ID"
     
     @dbus.service.method("de.snapp.ServoControllerInterface",
-                         in_signature='ii', out_signature='b')
-    def ThrottleMotor(self, motor_id, duration):
+                         in_signature='idd', out_signature='b')
+    def ThrottleMotor(self, motor_id, duration, throttle):
         print("ThrottleMotor request:", session_bus.get_unique_name())
         print("Motor ID:", motor_id)
         print("Duration:", duration)
+        print("Throttle:", throttle)
         if 0 <= motor_id < len(self.servos):
-            self.servos[motor_id].throttle = 0.5
+            self.servos[motor_id].throttle = throttle
             time.sleep(duration)
             self.servos[motor_id].throttle = 0.0
             time.sleep(0.1)
