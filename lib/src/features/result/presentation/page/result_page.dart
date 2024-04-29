@@ -136,6 +136,6 @@ class _QrCodeWidgetState extends ConsumerState<QrCodeWidget>
 
   void onAnimationCompleted() {
     _isQrCodeVisible.value = true;
-    ref.read(makeMixNotifierProvider.notifier).startMixing(widget.candyBox);
+    // ref.read(makeMixNotifierProvider.notifier).startMixing(widget.candyBox);
   }
 }
