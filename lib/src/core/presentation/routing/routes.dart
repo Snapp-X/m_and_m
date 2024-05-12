@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m_and_m/src/features/idle/presentation/page/idle_page.dart';
-import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/mix/presentation/page/mix_page.dart';
+import 'package:m_and_m/src/features/mix/presentation/page/singe_dispense_page.dart';
 import 'package:m_and_m/src/features/result/presentation/page/result_page.dart';
 
 part 'routes.g.dart';
@@ -36,6 +36,21 @@ class MixPageRoute extends GoRouteData {
   }
 }
 
+// Single Dispense path
+@TypedGoRoute<SingleDispenseRoute>(
+  path: '/single-dispense',
+  name: 'single-dispense',
+)
+@immutable
+class SingleDispenseRoute extends GoRouteData {
+  const SingleDispenseRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SingleDispensePage();
+  }
+}
+
 // Result path
 @TypedGoRoute<ResultPageRoute>(
   path: '/result',
@@ -45,10 +60,10 @@ class MixPageRoute extends GoRouteData {
 class ResultPageRoute extends GoRouteData {
   const ResultPageRoute(this.$extra);
 
-  final CandyBox $extra;
+  final ResultPageArgs $extra;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return ResultPage(candyBox: $extra);
+    return ResultPage(args: $extra);
   }
 }

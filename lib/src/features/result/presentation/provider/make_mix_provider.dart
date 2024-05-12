@@ -34,4 +34,24 @@ class MakeMixNotifier extends StateNotifier<AsyncValue<CandyBox>?> {
 
     state = AsyncValue.data(candyBox);
   }
+
+  Future<void> startPortioning(int numberOfPortions) async {
+    final duration = 0.5 * numberOfPortions;
+
+    try {
+      state = const AsyncValue.loading();
+      log('Throttling motor for candy for $numberOfPortions portions');
+      final result = await dBusRepository.throttleMotor(0, duration: duration);
+
+      if (!result) {
+        throw Exception('Failed to start motor 0');
+      }
+    } catch (e, s) {
+      log(e.toString(), stackTrace: s);
+      state = AsyncValue.error(e, s);
+      return;
+    }
+
+    state = const AsyncValue.data(CandyBox());
+  }
 }

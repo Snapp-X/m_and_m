@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
@@ -10,11 +13,25 @@ import 'package:m_and_m/src/features/result/presentation/page/result_page.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 import 'package:recase/recase.dart';
 
-class MixPage extends ConsumerWidget {
-  const MixPage({super.key});
+class SingleDispensePage extends ConsumerStatefulWidget {
+  const SingleDispensePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _SingleDispensePageState();
+}
+
+class _SingleDispensePageState extends ConsumerState<SingleDispensePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      ref.read(candyMixerProvider.notifier).addAllCandies();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff24272C),
       body: BodyContainer(
@@ -30,7 +47,7 @@ class MixPage extends ConsumerWidget {
                   child: SizedBox(
                     width: 840,
                     child: Text(
-                      'Dive into the M&M rainbow and handpick the hues that make your taste buds tango. Choose 4 times, feel free to double down on your faves, and and let the M&M magic unfold.',
+                      'Choose how many M&Ms you want to dispense. You can choose up to 4 portions of M&Ms at a time. ',
                       style: TextStyle(
                         color: Color(0xf17F8493),
                         fontSize: 30,
@@ -42,18 +59,48 @@ class MixPage extends ConsumerWidget {
               ),
               const SizedBox(height: 60),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (final color in CandyColor.values)
-                    CandyWidget(
-                      candyColor: color,
-                      onPressed: () {
-                        ref.read(candyMixerProvider.notifier).addCandy(color);
-                      },
+                  Text(
+                    ref.watch(singleDispenseProvider).toString(),
+                    style: const TextStyle(
+                      color: Color(0xf17F8493),
+                      fontSize: 30,
+                      fontWeight: FontWeight.normal,
                     ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 40),
+              const SizedBox(
+                height: 20,
+              ),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 12.0,
+                  thumbShape:
+                      const RoundSliderThumbShape(enabledThumbRadius: 36.0),
+                  overlayShape:
+                      const RoundSliderOverlayShape(overlayRadius: 48.0),
+                  activeTrackColor: const Color(0xffFDDD02),
+                  inactiveTrackColor: const Color(0xff7F8493),
+                  thumbColor: const Color(0xffFDDD02),
+                  overlayColor: const Color(0xffFDDD02).withOpacity(.3),
+                  showValueIndicator: ShowValueIndicator.never,
+                ),
+                child: Slider(
+                  value: ref.watch(singleDispenseProvider).toDouble(),
+                  onChanged: (value) {
+                    ref
+                        .read(singleDispenseProvider.notifier)
+                        .updatePortionSize(value.toInt());
+                    log(value.toString());
+                  },
+                  min: 0,
+                  max: 4,
+                  divisions: 4,
+                ),
+              ),
+              const SizedBox(height: 80),
               const MixButton(),
             ],
           ),

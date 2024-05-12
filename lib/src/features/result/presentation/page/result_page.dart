@@ -8,9 +8,9 @@ import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/result/presentation/provider/make_mix_provider.dart';
 
 class ResultPage extends ConsumerWidget {
-  const ResultPage({super.key, required this.candyBox});
+  const ResultPage({super.key, required this.args});
 
-  final CandyBox candyBox;
+  final ResultPageArgs args;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,7 +21,10 @@ class ResultPage extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              QrCodeWidget(candyBox: candyBox),
+              QrCodeWidget(
+                candyBox: args.candyBox,
+                numberOfPortions: args.numberOfPortions,
+              ),
               const SizedBox(height: 60),
               const Text(
                 "Explore our Flutter project by scanning the QR code to access its \nGitHub repository. We're excited to see what you create with our \nproject—share it on social media by tagging us \n@SnappEmbedded. We look forward to your contributions!",
@@ -41,9 +44,11 @@ class ResultPage extends ConsumerWidget {
 }
 
 class QrCodeWidget extends ConsumerStatefulWidget {
-  const QrCodeWidget({super.key, required this.candyBox});
+  const QrCodeWidget(
+      {super.key, required this.candyBox, this.numberOfPortions});
 
   final CandyBox candyBox;
+  final int? numberOfPortions;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _QrCodeWidgetState();
@@ -136,6 +141,17 @@ class _QrCodeWidgetState extends ConsumerState<QrCodeWidget>
 
   void onAnimationCompleted() {
     _isQrCodeVisible.value = true;
-    ref.read(makeMixNotifierProvider.notifier).startMixing(widget.candyBox);
+    // ref.read(makeMixNotifierProvider.notifier).startMixing(widget.candyBox);
+    ref
+        .read(makeMixNotifierProvider.notifier)
+        .startPortioning(widget.numberOfPortions ?? 0);
   }
+}
+
+class ResultPageArgs {
+  const ResultPageArgs(
+      {required this.candyBox, required this.numberOfPortions});
+
+  final CandyBox candyBox;
+  final int numberOfPortions;
 }

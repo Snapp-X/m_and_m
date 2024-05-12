@@ -9,6 +9,7 @@ part of 'routes.dart';
 List<RouteBase> get $appRoutes => [
       $idlePageRoute,
       $mixPageRoute,
+      $singleDispenseRoute,
       $resultPageRoute,
     ];
 
@@ -58,6 +59,30 @@ extension $MixPageRouteExtension on MixPageRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
+RouteBase get $singleDispenseRoute => GoRouteData.$route(
+      path: '/single-dispense',
+      name: 'single-dispense',
+      factory: $SingleDispenseRouteExtension._fromState,
+    );
+
+extension $SingleDispenseRouteExtension on SingleDispenseRoute {
+  static SingleDispenseRoute _fromState(GoRouterState state) =>
+      const SingleDispenseRoute();
+
+  String get location => GoRouteData.$location(
+        '/single-dispense',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
 RouteBase get $resultPageRoute => GoRouteData.$route(
       path: '/result',
       name: 'result',
@@ -66,7 +91,7 @@ RouteBase get $resultPageRoute => GoRouteData.$route(
 
 extension $ResultPageRouteExtension on ResultPageRoute {
   static ResultPageRoute _fromState(GoRouterState state) => ResultPageRoute(
-        state.extra as CandyBox,
+        state.extra as ResultPageArgs,
       );
 
   String get location => GoRouteData.$location(

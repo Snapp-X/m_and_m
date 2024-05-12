@@ -25,4 +25,10 @@ class CandyMixerNotifier extends StateNotifier<CandyBox> {
         ),
     );
   }
+
+  void addAllCandies() {
+    for (final color in CandyColor.values) {
+      addCandy(color);
+    }
+  }
 }
