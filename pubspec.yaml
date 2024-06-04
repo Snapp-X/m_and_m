@@ -19,6 +19,7 @@ dependencies:
   neumorphic_ui: ^1.0.1
   recase: ^4.1.0
   rive: ^0.12.4
+  circular_reveal_animation: ^2.0.1
 
 dev_dependencies:
   flutter_test:

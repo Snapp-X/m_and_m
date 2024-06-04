@@ -8,6 +8,7 @@ part of 'routes.dart';
 
 List<RouteBase> get $appRoutes => [
       $idlePageRoute,
+      $guidePageRoute,
       $mixPageRoute,
       $resultPageRoute,
     ];
@@ -23,6 +24,30 @@ extension $IdlePageRouteExtension on IdlePageRoute {
 
   String get location => GoRouteData.$location(
         '/',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $guidePageRoute => GoRouteData.$route(
+      path: '/guide',
+      name: 'guide',
+      factory: $GuidePageRouteExtension._fromState,
+    );
+
+extension $GuidePageRouteExtension on GuidePageRoute {
+  static GuidePageRoute _fromState(GoRouterState state) =>
+      const GuidePageRoute();
+
+  String get location => GoRouteData.$location(
+        '/guide',
       );
 
   void go(BuildContext context) => context.go(location);
