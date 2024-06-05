@@ -2,6 +2,7 @@ import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m_and_m/src/core/presentation/routing/page_transition.dart';
+import 'package:m_and_m/src/features/catch_game/presentation/page/catch_game_page.dart';
 import 'package:m_and_m/src/features/guide/presentation/page/guide_page.dart';
 import 'package:m_and_m/src/features/idle/presentation/page/idle_page.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
@@ -75,6 +76,24 @@ class MixPageRoute extends GoRouteData {
     return DefaultPageTransition(
       key: state.pageKey,
       child: const MixPage(),
+    );
+  }
+}
+
+// 
+@TypedGoRoute<CatchGameRoute>(
+  path: '/catch-game',
+  name: 'catch-game',
+)
+@immutable
+class CatchGameRoute extends GoRouteData {
+  const CatchGameRoute();
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return DefaultPageTransition(
+      key: state.pageKey,
+      child: const CacheGamePage(),
     );
   }
 }

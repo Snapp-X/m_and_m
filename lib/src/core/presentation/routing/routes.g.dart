@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
       $idlePageRoute,
       $guidePageRoute,
       $mixPageRoute,
+      $catchGameRoute,
       $resultPageRoute,
     ];
 
@@ -71,6 +72,30 @@ extension $MixPageRouteExtension on MixPageRoute {
 
   String get location => GoRouteData.$location(
         '/mix',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $catchGameRoute => GoRouteData.$route(
+      path: '/catch-game',
+      name: 'catch-game',
+      factory: $CatchGameRouteExtension._fromState,
+    );
+
+extension $CatchGameRouteExtension on CatchGameRoute {
+  static CatchGameRoute _fromState(GoRouterState state) =>
+      const CatchGameRoute();
+
+  String get location => GoRouteData.$location(
+        '/catch-game',
       );
 
   void go(BuildContext context) => context.go(location);

@@ -1,141 +1,160 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
-import 'package:m_and_m/src/core/presentation/widget/spin_in_progress.dart';
+import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
+import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
-import 'package:m_and_m/src/features/result/presentation/provider/make_mix_provider.dart';
+import 'package:neumorphic_ui/neumorphic_ui.dart';
 
-class ResultPage extends ConsumerWidget {
+class ResultPage extends ConsumerStatefulWidget {
   const ResultPage({super.key, required this.candyBox});
 
   final CandyBox candyBox;
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      backgroundColor: const Color(0xff24272C),
-      body: BodyContainer(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              QrCodeWidget(candyBox: candyBox),
-              const SizedBox(height: 60),
-              const Text(
-                "Explore our Flutter project by scanning the QR code to access its \nGitHub repository. We're excited to see what you create with our \nproject—share it on social media by tagging us \n@SnappEmbedded. We look forward to your contributions!",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xf17F8493),
-                  fontSize: 30,
-                  fontWeight: FontWeight.normal,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  ConsumerState<ConsumerStatefulWidget> createState() => _ResultPageState();
 }
 
-class QrCodeWidget extends ConsumerStatefulWidget {
-  const QrCodeWidget({super.key, required this.candyBox});
-
-  final CandyBox candyBox;
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _QrCodeWidgetState();
-}
-
-class _QrCodeWidgetState extends ConsumerState<QrCodeWidget>
+class _ResultPageState extends ConsumerState<ResultPage>
     with TickerProviderStateMixin {
-  late final SpinInProgressController _progressAnimationController;
+  late final AnimationController _backgroundColorAnimationController;
+  late final AnimationController _contentAnimationController;
+  late final Animation<double> _contentAnimation;
 
-  final ValueNotifier<bool> _isQrCodeVisible = ValueNotifier(false);
+  late final colorTween =
+      ColorTween(begin: ThemeColors.green, end: ThemeColors.yellow);
 
   @override
   void initState() {
     super.initState();
-    _progressAnimationController = SpinInProgressController(
+
+    _backgroundColorAnimationController = AnimationController(
       vsync: this,
-      colors: widget.candyBox.portions.values.map((e) => e.color).toList(),
+      duration: const Duration(milliseconds: 600),
+    )
+      ..addStatusListener(_onColorAnimationChange)
+      ..forward();
+
+    _contentAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
     );
 
-    _progressAnimationController.moveInAnimation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        onAnimationCompleted();
-      }
-    });
-
-    _progressAnimationController.startMoveInAnimation();
-  }
-
-  @override
-  void dispose() {
-    _progressAnimationController.dispose();
-    super.dispose();
+    _contentAnimation = CurvedAnimation(
+      parent: _contentAnimationController,
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final mixResult = ref.watch(makeMixNotifierProvider);
-    log('makeMixNotifierProvider: $mixResult', name: 'ResultPage');
-// qr-code.png
-    return SpinInProgress(
-      controller: _progressAnimationController,
-      child: Container(
-        width: 230,
-        height: 230,
-        decoration: ShapeDecoration(
-          color: const Color(0xFF24272C),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(42),
-          ),
-          shadows: const [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 20,
-              offset: Offset(5, 5),
-              spreadRadius: 0,
-            ),
-            BoxShadow(
-              color: Colors.white24,
-              blurRadius: 20,
-              offset: Offset(-5, -5),
-              spreadRadius: 0,
-            )
-          ],
-        ),
-        child: ValueListenableBuilder(
-          valueListenable: _isQrCodeVisible,
-          builder: (context, isQrCodeVisible, child) {
-            return AnimatedOpacity(
-              opacity: isQrCodeVisible ? 1 : 0,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-              child: child,
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32),
-              child: Image.asset(
-                'assets/img/qr-code.png',
-                width: 220,
-                height: 220,
+    return Scaffold(
+      body: AnimatedBuilder(
+        animation: _backgroundColorAnimationController,
+        builder: (context, child) {
+          return ColoredBox(
+            color: colorTween.evaluate(_backgroundColorAnimationController)!,
+            child: child,
+          );
+        },
+        child: Stack(
+          children: [
+            PositionedDirectional(
+              top: 100,
+              end: 100,
+              child: Consumer(
+                builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                  return ScaleTransition(
+                    scale: _contentAnimation,
+                    child: FloatingActionButton.large(
+                      elevation: 0,
+                      backgroundColor: ThemeColors.brown,
+                      foregroundColor: ThemeColors.yellow,
+                      shape: const CircleBorder(),
+                      onPressed: () {
+                        ref.read(seasonControlProvider.notifier).idle();
+                      },
+                      child: const Icon(
+                        Icons.close_rounded,
+                        size: 64,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          ),
+            Center(
+              child: FadeTransition(
+                opacity: _contentAnimation,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'ENJOY YOUR MIX!',
+                      textAlign: TextAlign.center,
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                color: ThemeColors.brown,
+                              ),
+                    ),
+                    Text(
+                      'A PROJECT BY SNAPP EMBEDDED. MADE WITH FLUTTER.',
+                      textAlign: TextAlign.center,
+                      style:
+                          Theme.of(context).textTheme.displayMedium?.copyWith(
+                                color: ThemeColors.brown,
+                              ),
+                    ),
+                    const SizedBox(height: 64),
+                    SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0, 1),
+                        end: const Offset(0, 0),
+                      ).animate(_contentAnimation),
+                      child: RotationTransition(
+                        turns: Tween<double>(
+                          begin: 0.2,
+                          end: 0,
+                        ).animate(_contentAnimation),
+                        child: const QrCodeWidget(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void onAnimationCompleted() {
-    _isQrCodeVisible.value = true;
-    ref.read(makeMixNotifierProvider.notifier).startMixing(widget.candyBox);
+  void _onColorAnimationChange(state) {
+    if (state == AnimationStatus.completed) {
+      _contentAnimationController.forward();
+    }
+  }
+}
+
+class QrCodeWidget extends StatelessWidget {
+  const QrCodeWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 300,
+      height: 300,
+      padding: const EdgeInsets.all(20),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 1, color: ThemeColors.brown),
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      child: Image.asset(
+        'assets/img/qr_code.png',
+        fit: BoxFit.cover,
+      ),
+    );
   }
 }
