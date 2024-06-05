@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+const _timeoutToIdle = Duration(minutes: 2);
+
 final seasonControlProvider =
     StateNotifierProvider<SeasonControlProvider, SeasonState>((ref) {
   return SeasonControlProvider();
@@ -19,8 +21,6 @@ enum SeasonState {
   bool get isInteracting => this == SeasonState.interacting;
   bool get isCompleted => this == SeasonState.completed;
 }
-
-const _timeoutToIdle = Duration(minutes: 2);
 
 class SeasonControlProvider extends StateNotifier<SeasonState> {
   SeasonControlProvider() : super(SeasonState.idle);

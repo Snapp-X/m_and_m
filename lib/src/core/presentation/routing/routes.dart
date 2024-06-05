@@ -1,6 +1,7 @@
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m_and_m/src/core/presentation/routing/page_transition.dart';
 import 'package:m_and_m/src/features/guide/presentation/page/guide_page.dart';
 import 'package:m_and_m/src/features/idle/presentation/page/idle_page.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
@@ -9,6 +10,8 @@ import 'package:m_and_m/src/features/result/presentation/page/result_page.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 part 'routes.g.dart';
+
+const _kPageTransitionAnimationDuration = Duration(milliseconds: 600);
 
 @TypedGoRoute<IdlePageRoute>(
   path: '/',
@@ -19,8 +22,11 @@ class IdlePageRoute extends GoRouteData {
   const IdlePageRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const IdlePage();
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return DefaultPageTransition(
+      key: state.pageKey,
+      child: const IdlePage(),
+    );
   }
 }
 
@@ -37,7 +43,8 @@ class GuidePageRoute extends GoRouteData {
     return CustomTransitionPage<void>(
       key: state.pageKey,
       child: const GuidePage(),
-      transitionDuration: const Duration(milliseconds: 600),
+      transitionDuration: _kPageTransitionAnimationDuration,
+      reverseTransitionDuration: _kPageTransitionAnimationDuration,
       transitionsBuilder: (
         BuildContext context,
         Animation<double> animation,
@@ -46,6 +53,7 @@ class GuidePageRoute extends GoRouteData {
       ) {
         return CircularRevealAnimation(
           animation: CurveTween(curve: Curves.easeInOut).animate(animation),
+          centerAlignment: const Alignment(0, 0.8),
           child: child,
         );
       },
@@ -63,8 +71,11 @@ class MixPageRoute extends GoRouteData {
   const MixPageRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const MixPage();
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return DefaultPageTransition(
+      key: state.pageKey,
+      child: const MixPage(),
+    );
   }
 }
 
@@ -80,7 +91,10 @@ class ResultPageRoute extends GoRouteData {
   final CandyBox $extra;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return ResultPage(candyBox: $extra);
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return DefaultPageTransition(
+      key: state.pageKey,
+      child: ResultPage(candyBox: $extra),
+    );
   }
 }

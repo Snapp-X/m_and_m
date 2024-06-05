@@ -27,7 +27,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
       if (seasonState.isStarted &&
           state.uri.path == const IdlePageRoute().location) {
-        return const MixPageRoute().location;
+        return const GuidePageRoute().location;
       }
 
       return null;
