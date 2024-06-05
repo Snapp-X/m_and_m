@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
 import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
+import 'package:m_and_m/src/features/result/presentation/widget/result_background_transition.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 class ResultPage extends ConsumerStatefulWidget {
@@ -29,7 +29,7 @@ class _ResultPageState extends ConsumerState<ResultPage>
 
     _backgroundColorAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 2600),
     )
       ..addStatusListener(_onColorAnimationChange)
       ..forward();
@@ -58,6 +58,7 @@ class _ResultPageState extends ConsumerState<ResultPage>
         },
         child: Stack(
           children: [
+            ResultBackgroundAnimation(),
             PositionedDirectional(
               top: 100,
               end: 100,
