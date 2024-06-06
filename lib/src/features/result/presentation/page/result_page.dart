@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
 import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
 import 'package:m_and_m/src/core/presentation/widget/spin_in_progress.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
@@ -17,26 +19,46 @@ class ResultPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: const Color(0xff24272C),
       body: BodyContainer(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              QrCodeWidget(
-                candyBox: args.candyBox,
-                numberOfPortions: args.numberOfPortions,
-              ),
-              const SizedBox(height: 60),
-              const Text(
-                "Explore our Flutter project by scanning the QR code to access its \nGitHub repository. We're excited to see what you create with our \nproject—share it on social media by tagging us \n@SnappEmbedded. We look forward to your contributions!",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xf17F8493),
-                  fontSize: 30,
-                  fontWeight: FontWeight.normal,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 20,
+              right: 20,
+              child: FloatingActionButton.large(
+                elevation: 0,
+                backgroundColor: Colors.white12,
+                shape: const CircleBorder(),
+                onPressed: () {
+                  ref.read(seasonControlProvider.notifier).idle();
+                },
+                child: const Icon(
+                  Icons.close_rounded,
+                  size: 64,
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  QrCodeWidget(
+                    candyBox: args.candyBox,
+                    numberOfPortions: args.numberOfPortions,
+                  ),
+                  const SizedBox(height: 60),
+                  const Text(
+                    "Explore our Flutter project by scanning the QR code to access its \nGitHub repository. We're excited to see what you create with our \nproject—share it on social media by tagging us \n@SnappEmbedded. We look forward to your contributions!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xf17F8493),
+                      fontSize: 30,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
