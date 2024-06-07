@@ -58,7 +58,7 @@ class _ResultPageState extends ConsumerState<ResultPage>
         },
         child: Stack(
           children: [
-            ResultBackgroundAnimation(),
+            const ResultBackgroundAnimation(),
             PositionedDirectional(
               top: 100,
               end: 100,

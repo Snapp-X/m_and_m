@@ -3,9 +3,13 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
+import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
+import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/page/candy_controller.dart';
+import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 // TODO(payam): add precache logic for images
@@ -14,8 +18,12 @@ const _candyFallDuration = Duration(seconds: 3);
 const _candyGenerateInterval = Duration(seconds: 1);
 
 const bagWidgetWidth = 250.0;
+const bagWidgetHeight = 300.0;
 
-const childHalfSize = bagWidgetWidth / 2;
+const collectorBagWidth = bagWidgetWidth * 0.6;
+const collectorBagHeight = bagWidgetHeight * 0.8;
+
+const bagHalfSize = bagWidgetWidth / 2;
 
 const candySize = 150.0;
 const candyOuterPadding = 32;
@@ -28,19 +36,19 @@ class CacheGamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: ThemeColors.green,
-      body: GameScene(),
+      body: Game(),
     );
   }
 }
 
-class GameScene extends StatefulWidget {
-  const GameScene({super.key});
+class Game extends ConsumerStatefulWidget {
+  const Game({super.key});
 
   @override
-  GameSceneState createState() => GameSceneState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _GameState();
 }
 
-class GameSceneState extends State<GameScene> with TickerProviderStateMixin {
+class _GameState extends ConsumerState<Game> with TickerProviderStateMixin {
   late final Timer timer;
   final Random random = Random();
 
@@ -75,22 +83,18 @@ class GameSceneState extends State<GameScene> with TickerProviderStateMixin {
                   random.nextInt(availableRowPositions.length)],
               autoStart: true,
               duration: _candyFallDuration,
-              onFallAnimationCompleted: (id) {
-                final removedController = candyControllers.firstWhereOrNull(
-                  (controller) => controller.id == id,
-                );
-
-                if (removedController == null) return;
-
-                candyControllers.remove(removedController);
-
-                removedController.dispose();
-              },
+              onFallAnimationCompleted: _removeCandyController,
+              onPositionChanged: _onCandyPositionChanged,
             ),
           );
         });
       },
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      updateBagPosition(MediaQuery.of(context).size.center(Offset.zero),
+          MediaQuery.of(context).size);
+    });
   }
 
   @override
@@ -106,12 +110,22 @@ class GameSceneState extends State<GameScene> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(
+      candyMixerProvider,
+      (previous, next) {
+        if (next.portions.length ==
+            ref.read(candyMixerProvider.notifier).limit) {
+          finishGame(next);
+        }
+      },
+    );
+
     final screenSize = MediaQuery.of(context).size;
-    final candyRowCount = screenSize.width ~/ candyRowWidth;
-    final outerPadding = (screenSize.width - candyRowCount * candyRowWidth) / 2;
+    final rowCount = candyRowCount(context);
+    final outerPadding = (screenSize.width - rowCount * candyRowWidth) / 2;
 
     final List<Widget> candyRows = [
-      for (var i = 0; i < candyRowCount; i++)
+      for (var i = 0; i < rowCount; i++)
         Positioned(
           left: outerPadding + i * candyRowWidth,
           top: 0,
@@ -128,9 +142,15 @@ class GameSceneState extends State<GameScene> with TickerProviderStateMixin {
         children: [
           ...candyRows,
           for (var controller in candyControllers)
-            if (controller.rowPosition < candyRowCount)
+            if (controller.rowPosition < rowCount)
               AnimatedBuilder(
-                animation: controller.dyAnimation,
+                animation: Listenable.merge(
+                  [
+                    controller.dyAnimation,
+                    controller.rotateAnimation,
+                    controller.fadeOutAnimation,
+                  ],
+                ),
                 builder: (context, child) {
                   final dx = (candyOuterPadding / 2) +
                       (outerPadding) +
@@ -138,16 +158,46 @@ class GameSceneState extends State<GameScene> with TickerProviderStateMixin {
 
                   final dy =
                       controller.dyPosition(screenSize.height, candySize);
+
                   return Positioned(
                     left: dx,
                     top: dy,
                     child: RotationTransition(
                       turns: controller.rotateAnimation,
-                      child: Candy(color: controller.color),
+                      child: ScaleTransition(
+                        scale: controller.fadeOutAnimation,
+                        child: Candy(color: controller.color),
+                      ),
                     ),
                   );
                 },
               ),
+          PositionedDirectional(
+            top: 100,
+            start: 100,
+            child: Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                return FloatingActionButton.large(
+                  elevation: 0,
+                  backgroundColor: ThemeColors.darkGreen,
+                  foregroundColor: ThemeColors.green,
+                  shape: const CircleBorder(),
+                  onPressed: () {
+                    ref.read(seasonControlProvider.notifier).idle();
+                  },
+                  child: const Icon(
+                    Icons.close_rounded,
+                    size: 64,
+                  ),
+                );
+              },
+            ),
+          ),
+          const Positioned(
+            top: 100,
+            right: 100,
+            child: CollectedCandiesWidget(),
+          ),
           ValueListenableBuilder(
             valueListenable: bagPosition,
             child: GestureDetector(
@@ -158,8 +208,33 @@ class GameSceneState extends State<GameScene> with TickerProviderStateMixin {
             builder: (context, Offset position, child) {
               return Positioned(
                 left: position.dx,
-                bottom: 0,
+                top: position.dy,
                 child: child!,
+              );
+            },
+          ),
+          ValueListenableBuilder(
+            valueListenable: bagPosition,
+            builder: (context, Offset position, child) {
+              final collectorRect = _collectorRect(position);
+
+              return Positioned(
+                left: collectorRect.left,
+                top: collectorRect.top,
+                child: Container(
+                  width: collectorRect.width,
+                  height: collectorRect.height,
+                  color: Colors.black45,
+                  child: const Center(
+                    child: Text(
+                      'Collector',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                ),
               );
             },
           ),
@@ -168,19 +243,88 @@ class GameSceneState extends State<GameScene> with TickerProviderStateMixin {
     );
   }
 
+  void finishGame(candyBox) {
+    timer.cancel();
+
+    ResultPageRoute(candyBox).go(context);
+  }
+
   int candyRowCount(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return screenSize.width ~/ candyRowWidth;
   }
 
   void updateBagPosition(Offset newPosition, Size screenSize) {
-    if (newPosition.dx < childHalfSize ||
-        newPosition.dx > screenSize.width - childHalfSize) {
+    if (newPosition.dx < bagHalfSize ||
+        newPosition.dx > screenSize.width - bagHalfSize) {
       return;
     }
 
-    bagPosition.value =
-        newPosition - const Offset(childHalfSize, childHalfSize);
+    final effectivePosition = Offset(
+      newPosition.dx,
+      screenSize.height - bagWidgetHeight,
+    );
+
+    bagPosition.value = effectivePosition - const Offset(bagHalfSize, 0);
+  }
+
+  Rect _collectorRect(Offset position) {
+    final collectorCenter = position +
+        const Offset(
+          (bagWidgetWidth - collectorBagWidth) / 2,
+          bagWidgetHeight - collectorBagHeight,
+        );
+
+    return Rect.fromLTWH(
+      collectorCenter.dx,
+      collectorCenter.dy,
+      collectorBagWidth,
+      collectorBagHeight,
+    );
+  }
+
+  void _onCandyPositionChanged(String candyId) {
+    final controller = candyControllers.firstWhereOrNull(
+      (controller) => controller.id == candyId,
+    );
+
+    if (controller == null) return;
+
+    final screenSize = MediaQuery.of(context).size;
+    final rowCount = candyRowCount(context);
+    final outerPadding = (screenSize.width - rowCount * candyRowWidth) / 2;
+
+    final collectorRect = _collectorRect(bagPosition.value);
+
+    final dx = (candyOuterPadding / 2) +
+        (outerPadding) +
+        controller.rowPosition * candyRowWidth;
+
+    final dy = controller.dyPosition(screenSize.height, candySize);
+
+    final candyRect = Rect.fromLTWH(
+      dx,
+      dy,
+      candySize,
+      candySize,
+    );
+
+    if (candyRect.overlaps(collectorRect)) {
+      ref.read(candyMixerProvider.notifier).addCandy(controller.color);
+      controller.startFadeOut();
+    }
+  }
+
+  void _removeCandyController(String candyId) {
+    final removedController = candyControllers.firstWhereOrNull(
+      (controller) => controller.id == candyId,
+    );
+
+    if (removedController == null) return;
+
+    candyControllers.remove(removedController);
+
+    removedController.dispose();
   }
 }
 
@@ -194,6 +338,7 @@ class BagWidget extends StatelessWidget {
       child: Image.asset(
         'assets/img/bag.png',
         width: bagWidgetWidth,
+        height: bagWidgetHeight,
       ),
     );
   }
@@ -209,6 +354,47 @@ class Candy extends StatelessWidget {
     return Image.asset(
       'assets/img/${color.name.toLowerCase()}.png',
       width: candySize,
+    );
+  }
+}
+
+class CollectedCandiesWidget extends ConsumerWidget {
+  const CollectedCandiesWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final box = ref.watch(candyMixerProvider);
+    final limit = ref.watch(candyMixerProvider.notifier).limit;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < limit; i++)
+          Container(
+            width: 100,
+            height: 100,
+            clipBehavior: Clip.antiAlias,
+            decoration: ShapeDecoration(
+              color: const Color(0x4C035D20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
+              ),
+            ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              switchInCurve: Curves.bounceOut,
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: box.portions[i] != null
+                  ? Image.asset(
+                      'assets/img/${box.portions[i]!.name.toLowerCase()}.png',
+                      width: 100,
+                    )
+                  : const SizedBox(width: 100, height: 100),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 
+const _fadeOutDuration = Duration(milliseconds: 400);
+
 class CandyController extends ChangeNotifier {
   CandyController({
     required TickerProvider vsync,
@@ -10,9 +12,10 @@ class CandyController extends ChangeNotifier {
     required this.rowPosition,
     bool autoStart = false,
     this.onFallAnimationCompleted,
+    this.onPositionChanged,
   }) {
     /// initialize the unique id for each candy controller base on the current time
-    id = DateTime.now().millisecond.toString();
+    id = DateTime.now().millisecondsSinceEpoch.toString();
 
     _dyPositionController = AnimationController(
       vsync: vsync,
@@ -31,11 +34,29 @@ class CandyController extends ChangeNotifier {
 
     rotateAnimation = Tween<double>(
       begin: 0,
-      end: 4,
+      end: 2,
     ).animate(_dyPositionController);
 
+    _fadeOutController = AnimationController(
+      vsync: vsync,
+      duration: _fadeOutDuration,
+    );
+
+    _fadeOutController.addListener(_fadeOutListener);
+    _fadeOutController.addStatusListener(_onFallAnimationCompleted);
+
+    fadeOutAnimation = Tween<double>(
+      begin: 1,
+      end: 0,
+    ).animate(
+      CurvedAnimation(
+        parent: _fadeOutController,
+        curve: Curves.easeOutQuad,
+      ),
+    );
+
     if (autoStart) {
-      start();
+      startFalling();
     }
   }
 
@@ -45,19 +66,42 @@ class CandyController extends ChangeNotifier {
   late final Animation<double> dyAnimation;
   late final Animation<double> rotateAnimation;
 
+  late final AnimationController _fadeOutController;
+  late final Animation<double> fadeOutAnimation;
+
   final CandyColor color;
   final int rowPosition;
 
   final ValueChanged<String>? onFallAnimationCompleted;
+  final ValueChanged<String>? onPositionChanged;
 
   double dyPosition(double screenHeight, double candySize) =>
-      dyAnimation.value * (screenHeight + candySize);
+      _fallingDownDyPosition(screenHeight, candySize) -
+      _fadeOutDyPosition(screenHeight, candySize);
 
-  void start() {
+  double _fallingDownDyPosition(double screenHeight, double candySize) =>
+      dyAnimation.value * (screenHeight + candySize) - candySize;
+
+  double _fadeOutDyPosition(double screenHeight, double candySize) =>
+      fadeOutAnimation.isDismissed
+          ? 0
+          : (-1 + fadeOutAnimation.value) * candySize;
+
+  void startFalling() {
     _dyPositionController.forward();
   }
 
+  void startFadeOut() {
+    _dyPositionController.stop();
+    _fadeOutController.forward();
+  }
+
   void _dyPositionListener() {
+    onPositionChanged?.call(id);
+    notifyListeners();
+  }
+
+  void _fadeOutListener() {
     notifyListeners();
   }
 
@@ -75,6 +119,9 @@ class CandyController extends ChangeNotifier {
     }
 
     _dyPositionController.dispose();
+
+    _fadeOutController.removeListener(_fadeOutListener);
+    _fadeOutController.removeStatusListener(_onFallAnimationCompleted);
 
     super.dispose();
   }
