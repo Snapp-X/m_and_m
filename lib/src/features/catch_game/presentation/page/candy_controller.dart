@@ -75,6 +75,18 @@ class CandyController extends ChangeNotifier {
   final ValueChanged<String>? onFallAnimationCompleted;
   final ValueChanged<String>? onPositionChanged;
 
+  ///  double dxPosition(double outerPadding, CandyController controller) {
+  /// return (candyOuterPadding / 2) +
+  ///                 (outerPadding) +
+  ///                 controller.rowPosition * candyRowWidth;
+  ///
+
+  double dxPosition(
+          double outerPadding, double candyOuterPadding, double candySize) =>
+      (candyOuterPadding / 2) +
+      (outerPadding) +
+      rowPosition * (candySize + candyOuterPadding);
+
   double dyPosition(double screenHeight, double candySize) =>
       _fallingDownDyPosition(screenHeight, candySize) -
       _fadeOutDyPosition(screenHeight, candySize);
