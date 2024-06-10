@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
-import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/page/candy_controller.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
@@ -213,31 +213,6 @@ class _GameState extends ConsumerState<Game> with TickerProviderStateMixin {
               );
             },
           ),
-          ValueListenableBuilder(
-            valueListenable: bagPosition,
-            builder: (context, Offset position, child) {
-              final collectorRect = _collectorRect(position);
-
-              return Positioned(
-                left: collectorRect.left,
-                top: collectorRect.top,
-                child: Container(
-                  width: collectorRect.width,
-                  height: collectorRect.height,
-                  color: Colors.black45,
-                  child: const Center(
-                    child: Text(
-                      'Collector',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
         ],
       ),
     );
@@ -246,7 +221,7 @@ class _GameState extends ConsumerState<Game> with TickerProviderStateMixin {
   void finishGame(candyBox) {
     timer.cancel();
 
-    ResultPageRoute(candyBox).go(context);
+    // ResultPageRoute(candyBox).go(context);
   }
 
   int candyRowCount(BuildContext context) {
@@ -311,6 +286,7 @@ class _GameState extends ConsumerState<Game> with TickerProviderStateMixin {
 
     if (candyRect.overlaps(collectorRect)) {
       ref.read(candyMixerProvider.notifier).addCandy(controller.color);
+
       controller.startFadeOut();
     }
   }
@@ -333,13 +309,10 @@ class BagWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: ThemeColors.darkGreen,
-      child: Image.asset(
-        'assets/img/bag.png',
-        width: bagWidgetWidth,
-        height: bagWidgetHeight,
-      ),
+    return Image.asset(
+      'assets/img/bag.png',
+      width: bagWidgetWidth,
+      height: bagWidgetHeight,
     );
   }
 }
@@ -358,11 +331,52 @@ class Candy extends StatelessWidget {
   }
 }
 
-class CollectedCandiesWidget extends ConsumerWidget {
+class CollectedCandiesWidget extends ConsumerStatefulWidget {
   const CollectedCandiesWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _CollectedCandiesWidgetState();
+}
+
+class _CollectedCandiesWidgetState
+    extends ConsumerState<CollectedCandiesWidget> {
+  late List<ConfettiController> _confettiControllers;
+
+  @override
+  void initState() {
+    super.initState();
+    final limit = ref.read(candyMixerProvider.notifier).limit;
+
+    _confettiControllers = List.generate(
+      limit,
+      (index) =>
+          ConfettiController(duration: const Duration(milliseconds: 300)),
+    );
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _confettiControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(
+      candyMixerProvider,
+      (previous, next) {
+        if (next.portions.length <=
+            ref.read(candyMixerProvider.notifier).limit) {
+          final controller = _confettiControllers[next.portions.length - 1];
+
+          controller.play();
+        }
+      },
+    );
+
     final box = ref.watch(candyMixerProvider);
     final limit = ref.watch(candyMixerProvider.notifier).limit;
 
@@ -370,28 +384,55 @@ class CollectedCandiesWidget extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         for (var i = 0; i < limit; i++)
-          Container(
+          SizedBox(
             width: 100,
             height: 100,
-            clipBehavior: Clip.antiAlias,
-            decoration: ShapeDecoration(
-              color: const Color(0x4C035D20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100),
-              ),
-            ),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              switchInCurve: Curves.bounceOut,
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-              child: box.portions[i] != null
-                  ? Image.asset(
-                      'assets/img/${box.portions[i]!.name.toLowerCase()}.png',
-                      width: 100,
-                    )
-                  : const SizedBox(width: 100, height: 100),
+            child: Stack(
+              fit: StackFit.expand,
+              clipBehavior: Clip.antiAlias,
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    color: const Color(0x4C035D20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                  ),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    switchInCurve: Curves.bounceOut,
+                    transitionBuilder:
+                        (Widget child, Animation<double> animation) {
+                      return ScaleTransition(scale: animation, child: child);
+                    },
+                    child: box.portions[i] != null
+                        ? Image.asset(
+                            'assets/img/${box.portions[i]!.name.toLowerCase()}.png',
+                            width: 100,
+                          )
+                        : const SizedBox(width: 100, height: 100),
+                  ),
+                ),
+                // TODO(payam): checkout the performance on raspberry pi
+                Center(
+                  child: ConfettiWidget(
+                    confettiController: _confettiControllers[i],
+                    blastDirectionality: BlastDirectionality.explosive,
+                    shouldLoop: false,
+                    numberOfParticles: 20,
+                    gravity: 0.5,
+                    colors: const [
+                      Colors.green,
+                      Colors.blue,
+                      Colors.red,
+                      Colors.yellow,
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
       ],

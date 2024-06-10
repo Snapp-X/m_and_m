@@ -21,6 +21,7 @@ dependencies:
   rive: ^0.12.4
   circular_reveal_animation: ^2.0.1
   collection: ^1.18.0
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:
