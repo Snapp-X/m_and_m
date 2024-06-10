@@ -80,7 +80,7 @@ class MixPageRoute extends GoRouteData {
   }
 }
 
-// 
+//
 @TypedGoRoute<CatchGameRoute>(
   path: '/catch-game',
   name: 'catch-game',
@@ -93,7 +93,7 @@ class CatchGameRoute extends GoRouteData {
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return DefaultPageTransition(
       key: state.pageKey,
-      child: const CacheGamePage(),
+      child: const CatchGamePage(),
     );
   }
 }

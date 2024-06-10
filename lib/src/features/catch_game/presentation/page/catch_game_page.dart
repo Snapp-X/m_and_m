@@ -1,42 +1,41 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
 import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_const.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_controller.dart';
-import 'package:m_and_m/src/features/catch_game/presentation/widget/cache_widget.dart';
+import 'package:m_and_m/src/features/catch_game/presentation/widget/catch_widget.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 // TODO(payam): add precache logic for images
-class CacheGamePage extends StatelessWidget {
-  const CacheGamePage({super.key});
+class CatchGamePage extends StatelessWidget {
+  const CatchGamePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: ThemeColors.green,
-      body: Game(),
+      body: GameBody(),
     );
   }
 }
 
-class Game extends ConsumerStatefulWidget {
-  const Game({super.key});
+class GameBody extends ConsumerStatefulWidget {
+  const GameBody({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _GameState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _GameBodyState();
 }
 
-class _GameState extends ConsumerState<Game> with TickerProviderStateMixin {
-  late final CacheGameController gameController;
+class _GameBodyState extends ConsumerState<GameBody> with TickerProviderStateMixin {
+  late final CatchGameController gameController;
 
   @override
   void initState() {
     super.initState();
 
-    gameController = CacheGameController(
+    gameController = CatchGameController(
       vsync: this,
       screenSizeProvider: () => MediaQuery.of(context).size,
       onCandyCatch: (color) {

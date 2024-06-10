@@ -8,8 +8,8 @@ import 'package:m_and_m/src/features/catch_game/presentation/page/candy_controll
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_const.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 
-class CacheGameController extends ChangeNotifier {
-  CacheGameController({
+class CatchGameController extends ChangeNotifier {
+  CatchGameController({
     required this.vsync,
     required this.screenSizeProvider,
     required this.onCandyCatch,
