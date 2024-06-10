@@ -1,4 +1,4 @@
-const candyFallDuration = Duration(seconds: 4);
+const candyFallDuration = Duration(seconds: 3);
 const candyGenerateInterval = Duration(seconds: 1);
 
 const bagWidgetWidth = 250.0;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
+import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_const.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_controller.dart';
@@ -28,7 +29,8 @@ class GameBody extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _GameBodyState();
 }
 
-class _GameBodyState extends ConsumerState<GameBody> with TickerProviderStateMixin {
+class _GameBodyState extends ConsumerState<GameBody>
+    with TickerProviderStateMixin {
   late final CatchGameController gameController;
 
   @override
@@ -82,24 +84,9 @@ class _GameBodyState extends ConsumerState<GameBody> with TickerProviderStateMix
     final rowCount = candyRowCount(context);
     final outerPadding = (screenSize.width - rowCount * candyRowWidth) / 2;
 
-    final List<Widget> candyRows = [
-      for (var i = 0; i < rowCount; i++)
-        Positioned(
-          left: outerPadding + i * candyRowWidth,
-          top: 0,
-          child: Container(
-            width: candyRowWidth,
-            height: screenSize.height,
-            color: [Colors.white54, Colors.white70][i % 2],
-          ),
-        ),
-    ];
-
     return GestureDetector(
       child: Stack(
         children: [
-          ...candyRows,
-
           /// Falling candies
           for (var controller in gameController.candyControllers.value)
             if (controller.rowPosition < rowCount)
@@ -189,7 +176,7 @@ class _GameBodyState extends ConsumerState<GameBody> with TickerProviderStateMix
   void finishGame(candyBox) {
     gameController.finishGame();
 
-    // ResultPageRoute(candyBox).go(context);
+    ResultPageRoute(candyBox).go(context);
   }
 
   int candyRowCount(BuildContext context) {

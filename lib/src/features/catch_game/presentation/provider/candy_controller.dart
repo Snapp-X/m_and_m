@@ -3,6 +3,8 @@ import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 
 const _fadeOutDuration = Duration(milliseconds: 400);
 
+/// The candy controller is a class that controls the candy animation
+/// It is responsible for the candy falling down and fading out animation
 class CandyController extends ChangeNotifier {
   CandyController({
     required TickerProvider vsync,
@@ -75,18 +77,14 @@ class CandyController extends ChangeNotifier {
   final ValueChanged<String>? onFallAnimationCompleted;
   final ValueChanged<String>? onPositionChanged;
 
-  ///  double dxPosition(double outerPadding, CandyController controller) {
-  /// return (candyOuterPadding / 2) +
-  ///                 (outerPadding) +
-  ///                 controller.rowPosition * candyRowWidth;
-  ///
-
+  /// calculate the x position of the candy
   double dxPosition(
           double outerPadding, double candyOuterPadding, double candySize) =>
       (candyOuterPadding / 2) +
       (outerPadding) +
       rowPosition * (candySize + candyOuterPadding);
 
+  /// calculate the y position of the candy
   double dyPosition(double screenHeight, double candySize) =>
       _fallingDownDyPosition(screenHeight, candySize) -
       _fadeOutDyPosition(screenHeight, candySize);

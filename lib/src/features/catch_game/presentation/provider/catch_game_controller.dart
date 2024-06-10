@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
-import 'package:m_and_m/src/features/catch_game/presentation/page/candy_controller.dart';
+import 'package:m_and_m/src/features/catch_game/presentation/provider/candy_controller.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_const.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 
@@ -39,7 +39,7 @@ class CatchGameController extends ChangeNotifier {
       candyGenerateInterval,
       (timer) {
         final List<int> availableRowPositions = List.generate(
-          candyRowCount(screenSizeProvider()),
+          screenSizeProvider().candyRowCount,
           (index) => index,
         )
             .where(
@@ -96,7 +96,7 @@ class CatchGameController extends ChangeNotifier {
     if (controller == null) return;
 
     final screenSize = screenSizeProvider();
-    final rowCount = candyRowCount(screenSize);
+    final rowCount = screenSize.candyRowCount;
     final outerPadding = (screenSize.width - rowCount * candyRowWidth) / 2;
 
     final bagOffset = bagPosition.value;
@@ -155,8 +155,6 @@ class CatchGameController extends ChangeNotifier {
     );
   }
 
-  int candyRowCount(Size screenSize) => screenSize.width ~/ candyRowWidth;
-
   @override
   void dispose() {
     timer?.cancel();
@@ -170,4 +168,8 @@ class CatchGameController extends ChangeNotifier {
 
     super.dispose();
   }
+}
+
+extension SizeExtension on Size {
+  int get candyRowCount => width ~/ candyRowWidth;
 }
