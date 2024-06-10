@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
 import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
+import 'package:m_and_m/src/features/result/presentation/provider/make_mix_provider.dart';
 import 'package:m_and_m/src/features/result/presentation/widget/result_background_transition.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 
@@ -46,7 +49,21 @@ class _ResultPageState extends ConsumerState<ResultPage>
   }
 
   @override
+  void dispose() {
+    _backgroundColorAnimationController.dispose();
+    _contentAnimationController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.listen(makeMixNotifierProvider, (previous, current) {
+      if (current is AsyncData) {
+        log('Mixing completed');
+      }
+    });
+
     return Scaffold(
       body: AnimatedBuilder(
         animation: _backgroundColorAnimationController,
@@ -132,7 +149,12 @@ class _ResultPageState extends ConsumerState<ResultPage>
   void _onColorAnimationChange(state) {
     if (state == AnimationStatus.completed) {
       _contentAnimationController.forward();
+      _startDbusConnection();
     }
+  }
+
+  void _startDbusConnection() {
+    ref.read(makeMixNotifierProvider.notifier).startMixing(widget.candyBox);
   }
 }
 
