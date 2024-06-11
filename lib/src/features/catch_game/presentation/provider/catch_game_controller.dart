@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/provider/candy_controller.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_const.dart';
-import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 class CatchGameController extends ChangeNotifier {
   CatchGameController({

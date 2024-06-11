@@ -7,7 +7,6 @@ import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/result/presentation/provider/make_mix_provider.dart';
 import 'package:m_and_m/src/features/result/presentation/widget/result_background_transition.dart';
-import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 class ResultPage extends ConsumerStatefulWidget {
   const ResultPage({super.key, required this.candyBox});

@@ -3,8 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rive/rive.dart';
 
-const _animationLayerName = "Timeline 1";
-
 final _resultTransitionRiveProvider = FutureProvider<RiveFile>((ref) async {
   final data = await rootBundle.load('assets/rive/result_transition.riv');
 

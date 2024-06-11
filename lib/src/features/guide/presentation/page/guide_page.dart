@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
 import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/theme/color.dart';
 import 'package:m_and_m/src/core/presentation/widget/content_body.dart';
-import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 class GuidePage extends StatelessWidget {
   const GuidePage({super.key});

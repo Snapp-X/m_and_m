@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
@@ -5,7 +6,6 @@ import 'package:m_and_m/src/core/presentation/widget/spin_out_progress.dart';
 import 'package:m_and_m/src/core/presentation/widget/nue_button.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
-import 'package:neumorphic_ui/neumorphic_ui.dart';
 import 'package:recase/recase.dart';
 
 class MixPage extends ConsumerWidget {

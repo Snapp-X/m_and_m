@@ -1,8 +1,7 @@
-
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/core/presentation/widget/spin_in_progress.dart';
-import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 class SpinQrCodeWidget extends ConsumerStatefulWidget {
   const SpinQrCodeWidget({super.key, required this.candyBox});

@@ -7,7 +7,6 @@ import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_controller.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/widget/catch_widget.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
-import 'package:neumorphic_ui/neumorphic_ui.dart';
 
 // TODO(payam): add precache logic for images
 class CatchGamePage extends StatelessWidget {
