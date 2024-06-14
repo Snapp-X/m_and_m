@@ -150,6 +150,7 @@ class _GameBodyState extends ConsumerState<GameBody>
                   elevation: 0,
                   backgroundColor: ThemeColors.darkGreen,
                   foregroundColor: ThemeColors.green,
+                  heroTag: 'close_button',
                   shape: const CircleBorder(),
                   onPressed: () {
                     ref.read(seasonControlProvider.notifier).idle();
