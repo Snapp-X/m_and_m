@@ -21,6 +21,7 @@ dependencies:
   circular_reveal_animation: ^2.0.1
   collection: ^1.18.0
   confetti: ^0.7.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

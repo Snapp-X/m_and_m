@@ -41,20 +41,8 @@ class ContentBody extends StatelessWidget {
         const SizedBox(height: 46),
         FilledButton(
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 48,
-              vertical: 20,
-            ),
             backgroundColor: darkColor,
             foregroundColor: lightColor,
-            minimumSize: const Size(200, 100),
-            textStyle: const TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.w700,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(100),
-            ),
           ),
           onPressed: onPressed,
           child: Row(

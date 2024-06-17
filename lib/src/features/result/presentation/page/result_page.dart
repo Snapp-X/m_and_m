@@ -148,7 +148,7 @@ class _ResultPageState extends ConsumerState<ResultPage>
   void _onColorAnimationChange(state) {
     if (state == AnimationStatus.completed) {
       _contentAnimationController.forward();
-      _startDbusConnection();
+      // _startDbusConnection();
     }
   }
 
