@@ -1,4 +1,4 @@
-import 'package:neumorphic_ui/neumorphic_ui.dart';
+import 'package:flutter/material.dart';
 
 class BodyContainer extends StatelessWidget {
   const BodyContainer({
@@ -11,16 +11,22 @@ class BodyContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand(
-      child: Neumorphic(
-        style: NeumorphicStyle(
-          depth: 5,
-          intensity: 0.5,
-          boxShape: NeumorphicBoxShape.roundRect(
-            const BorderRadius.all(Radius.circular(50)),
-          ),
-          color: const Color(0xff24272C),
-          shadowLightColor: Colors.white24,
-          shadowDarkColor: Colors.black,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color(0xff24272C),
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white24,
+              offset: Offset(-4, -4),
+              blurRadius: 4,
+            ),
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(4, 4),
+              blurRadius: 4,
+            ),
+          ],
         ),
         margin: const EdgeInsets.all(30),
         padding: const EdgeInsets.all(30),

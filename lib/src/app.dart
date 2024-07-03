@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/presentation/routing/router.dart';
+import 'package:m_and_m/src/core/presentation/theme/theme.dart';
 import 'package:m_and_m/src/core/presentation/widget/season_activity_tracker.dart';
 
 class App extends ConsumerWidget {
@@ -14,10 +15,7 @@ class App extends ConsumerWidget {
       child: MaterialApp.router(
         title: 'M&M',
         routerConfig: appRouter,
-        theme: ThemeData(
-          brightness: Brightness.dark,
-          fontFamily: 'SfProDisplay',
-        ),
+        theme: buildTheme(),
       ),
     );
   }

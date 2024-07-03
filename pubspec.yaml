@@ -16,9 +16,12 @@ dependencies:
   dbus: ^0.7.10
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
-  neumorphic_ui: ^1.0.1
   recase: ^4.1.0
   rive: ^0.12.4
+  circular_reveal_animation: ^2.0.1
+  collection: ^1.18.0
+  confetti: ^0.7.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

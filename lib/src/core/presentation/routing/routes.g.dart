@@ -8,7 +8,9 @@ part of 'routes.dart';
 
 List<RouteBase> get $appRoutes => [
       $idlePageRoute,
+      $guidePageRoute,
       $mixPageRoute,
+      $catchGameRoute,
       $resultPageRoute,
     ];
 
@@ -35,6 +37,30 @@ extension $IdlePageRouteExtension on IdlePageRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
+RouteBase get $guidePageRoute => GoRouteData.$route(
+      path: '/guide',
+      name: 'guide',
+      factory: $GuidePageRouteExtension._fromState,
+    );
+
+extension $GuidePageRouteExtension on GuidePageRoute {
+  static GuidePageRoute _fromState(GoRouterState state) =>
+      const GuidePageRoute();
+
+  String get location => GoRouteData.$location(
+        '/guide',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
 RouteBase get $mixPageRoute => GoRouteData.$route(
       path: '/mix',
       name: 'mix',
@@ -46,6 +72,30 @@ extension $MixPageRouteExtension on MixPageRoute {
 
   String get location => GoRouteData.$location(
         '/mix',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $catchGameRoute => GoRouteData.$route(
+      path: '/catch-game',
+      name: 'catch-game',
+      factory: $CatchGameRouteExtension._fromState,
+    );
+
+extension $CatchGameRouteExtension on CatchGameRoute {
+  static CatchGameRoute _fromState(GoRouterState state) =>
+      const CatchGameRoute();
+
+  String get location => GoRouteData.$location(
+        '/catch-game',
       );
 
   void go(BuildContext context) => context.go(location);
