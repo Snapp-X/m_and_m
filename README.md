@@ -5,6 +5,8 @@ Crafted for enthusiasts and developers alike, the M&M Mixer project is not just 
 
 With step-by-step instructions for hardware assembly, software development, and a detailed exploration of connecting Flutter to hardware, the M&M Mixer is your gateway to create a customizable, tech-driven candy experience. Join us as we explore the potential of Flutter and Raspberry Pi to bring a playful, innovative twist to candy dispensing.
 
+## snapp_cli
+we used [snapp_cli](https://github.com/Snapp-Embedded/snapp_cli "snapp_cli") to facilitate our development process. with [snapp_cli](https://github.com/Snapp-Embedded/snapp_cli "snapp_cli") we could have the remote debuging and with the help of Hot Reload, Hot Restart and Devtools we could implement our app eazier and faster.
 
 ## Hardware
 
