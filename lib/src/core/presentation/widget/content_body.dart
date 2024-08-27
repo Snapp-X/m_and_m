@@ -6,6 +6,7 @@ class ContentBody extends StatelessWidget {
     required this.title,
     required this.description,
     this.buttonText,
+    this.customWidget,
     this.onPressed,
     required this.lightColor,
     required this.darkColor,
@@ -15,6 +16,8 @@ class ContentBody extends StatelessWidget {
   final String description;
   final String? buttonText;
   final VoidCallback? onPressed;
+
+  final Widget? customWidget;
 
   final Color lightColor;
   final Color darkColor;
@@ -31,14 +34,22 @@ class ContentBody extends StatelessWidget {
                 color: darkColor,
               ),
         ),
-        Text(
-          description,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                color: darkColor,
-              ),
+        SizedBox(
+          width: 860,
+          child: Text(
+            description,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: darkColor,
+                  fontSize: 30,
+                ),
+          ),
         ),
         const SizedBox(height: 46),
+        if (customWidget != null) ...[
+          customWidget!,
+          const SizedBox(height: 120),
+        ],
         FilledButton(
           style: FilledButton.styleFrom(
             backgroundColor: darkColor,
