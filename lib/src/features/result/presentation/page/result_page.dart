@@ -158,7 +158,7 @@ class _ResultPageState extends ConsumerState<ResultPage>
     if (state == AnimationStatus.completed) {
       _contentAnimationController.forward();
       if (widget.gameResult == GameResult.win) {
-        // _startDbusConnection();
+        _startDbusConnection();
       }
     }
   }
