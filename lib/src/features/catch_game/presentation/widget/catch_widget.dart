@@ -2,6 +2,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m_and_m/src/core/domain/model/candy_box.dart';
+import 'package:m_and_m/src/features/catch_game/presentation/page/catch_game_page.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_const.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
 
@@ -71,13 +72,19 @@ class _CollectedCandiesWidgetState
       (previous, next) {
         if (next.portions.length <=
             ref.read(candyMixerProvider.notifier).limit) {
-          final controller = _confettiControllers[next.portions.length - 1];
+          final index = next.portions.length - 1;
 
-          controller.play();
+          final expectedCandyBox = ref.read(expectedCandyBoxProvider);
+
+          if (next.portions[index]! == expectedCandyBox.portions[index]!) {
+            final controller = _confettiControllers[index];
+            controller.play();
+          }
         }
       },
     );
 
+    final expectedBox = ref.read(expectedCandyBoxProvider);
     final box = ref.watch(candyMixerProvider);
     final limit = ref.watch(candyMixerProvider.notifier).limit;
 
@@ -114,10 +121,15 @@ class _CollectedCandiesWidgetState
                             'assets/img/${box.portions[i]!.name.toLowerCase()}.png',
                             width: 100,
                           )
-                        : const SizedBox(width: 100, height: 100),
+                        : Opacity(
+                            opacity: 0.4,
+                            child: Image.asset(
+                              'assets/img/${expectedBox.portions[i]!.name.toLowerCase()}.png',
+                              width: 100,
+                            ),
+                          ),
                   ),
                 ),
-                // TODO(payam): checkout the performance on raspberry pi
                 Center(
                   child: ConfettiWidget(
                     confettiController: _confettiControllers[i],

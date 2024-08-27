@@ -48,11 +48,14 @@ class CatchGameController extends ChangeNotifier {
             )
             .toList();
 
+        final newCandyColor =
+            CandyColor.values[timer.tick % CandyColor.values.length];
+
         candyControllers.value = [
           ...candyControllers.value,
           CandyController(
             vsync: vsync,
-            color: CandyColor.values[timer.tick % CandyColor.values.length],
+            color: newCandyColor,
             rowPosition: availableRowPositions[
                 random.nextInt(availableRowPositions.length)],
             autoStart: true,

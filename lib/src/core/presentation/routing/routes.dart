@@ -86,13 +86,15 @@ class MixPageRoute extends GoRouteData {
 )
 @immutable
 class CatchGameRoute extends GoRouteData {
-  const CatchGameRoute();
+  const CatchGameRoute(this.$extra);
+
+  final CandyBox $extra;
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return DefaultPageTransition(
       key: state.pageKey,
-      child: const CatchGamePage(),
+      child: CatchGamePage(expectedCandyBox: $extra),
     );
   }
 }
@@ -106,13 +108,13 @@ class CatchGameRoute extends GoRouteData {
 class ResultPageRoute extends GoRouteData {
   const ResultPageRoute(this.$extra);
 
-  final CandyBox $extra;
+  final GameResult $extra;
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return DefaultPageTransition(
       key: state.pageKey,
-      child: ResultPage(candyBox: $extra),
+      child: ResultPage(gameResult: $extra),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m_and_m/src/core/presentation/routing/routes.dart';
+// import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/widget/body_container.dart';
 import 'package:m_and_m/src/core/presentation/widget/spin_out_progress.dart';
 import 'package:m_and_m/src/core/presentation/widget/nue_button.dart';
@@ -190,8 +190,8 @@ class _MixButtonState extends ConsumerState<MixButton>
   }
 
   void onProcessCompleted() {
-    final candyBox = ref.read(candyMixerProvider);
+    // final candyBox = ref.read(candyMixerProvider);
 
-    ResultPageRoute(candyBox).go(context);
+    // ResultPageRoute(candyBox).go(context);
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m_and_m/src/core/domain/model/candy_box.dart';
 import 'package:m_and_m/src/core/presentation/provider/season_control_provider.dart';
 import 'package:m_and_m/src/core/presentation/routing/routes.dart';
 import 'package:m_and_m/src/core/presentation/theme/color.dart';
@@ -7,22 +10,36 @@ import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game
 import 'package:m_and_m/src/features/catch_game/presentation/provider/catch_game_controller.dart';
 import 'package:m_and_m/src/features/catch_game/presentation/widget/catch_widget.dart';
 import 'package:m_and_m/src/features/mix/presentation/provider/mix_provider.dart';
+import 'package:m_and_m/src/features/result/presentation/page/result_page.dart';
+
+final expectedCandyBoxProvider = Provider.autoDispose<CandyBox>((ref) {
+  throw UnimplementedError();
+});
 
 // TODO(payam): add precache logic for images
 class CatchGamePage extends StatelessWidget {
-  const CatchGamePage({super.key});
+  const CatchGamePage({super.key, required this.expectedCandyBox});
+
+  final CandyBox expectedCandyBox;
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: ThemeColors.green,
-      body: GameBody(),
+      body: ProviderScope(
+        overrides: [
+          expectedCandyBoxProvider.overrideWithValue(expectedCandyBox),
+        ],
+        child: const GameBody(),
+      ),
     );
   }
 }
 
 class GameBody extends ConsumerStatefulWidget {
-  const GameBody({super.key});
+  const GameBody({
+    super.key,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _GameBodyState();
@@ -74,7 +91,7 @@ class _GameBodyState extends ConsumerState<GameBody>
       (previous, next) {
         if (next.portions.length ==
             ref.read(candyMixerProvider.notifier).limit) {
-          finishGame(next);
+          finishGame();
         }
       },
     );
@@ -173,10 +190,21 @@ class _GameBodyState extends ConsumerState<GameBody>
     );
   }
 
-  void finishGame(candyBox) {
+  void finishGame() {
     gameController.finishGame();
 
-    ResultPageRoute(candyBox).go(context);
+    final expectedCandyBox = ref.read(expectedCandyBoxProvider);
+    final candyBox = ref.read(candyMixerProvider);
+
+    log('Expected: $expectedCandyBox');
+    log('Actual: $candyBox');
+
+    final GameResult gameResult =
+        expectedCandyBox == candyBox ? GameResult.win : GameResult.lose;
+
+    log('Game result: $gameResult');
+
+    ResultPageRoute(gameResult).go(context);
   }
 
   int candyRowCount(BuildContext context) {

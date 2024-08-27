@@ -16,13 +16,13 @@ class GuidePage extends StatefulWidget {
 }
 
 class _GuidePageState extends State<GuidePage> {
-  late final CandyBox candyBox;
+  late final CandyBox expectedCandyBox;
   final Random _random = Random();
 
   @override
   void initState() {
     super.initState();
-    candyBox = _makeRandomCandyBox();
+    expectedCandyBox = _makeRandomCandyBox();
   }
 
   @override
@@ -66,7 +66,7 @@ class _GuidePageState extends State<GuidePage> {
                   darkColor: ThemeColors.darkGreen,
                   customWidget: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: candyBox.portions.entries
+                    children: expectedCandyBox.portions.entries
                         .map(
                           (entry) => Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -80,7 +80,7 @@ class _GuidePageState extends State<GuidePage> {
                         .toList(),
                   ),
                   onPressed: () {
-                    const CatchGameRoute().go(context);
+                    CatchGameRoute(expectedCandyBox).go(context);
                   },
                 ),
               ),

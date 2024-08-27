@@ -91,21 +91,24 @@ RouteBase get $catchGameRoute => GoRouteData.$route(
     );
 
 extension $CatchGameRouteExtension on CatchGameRoute {
-  static CatchGameRoute _fromState(GoRouterState state) =>
-      const CatchGameRoute();
+  static CatchGameRoute _fromState(GoRouterState state) => CatchGameRoute(
+        state.extra as CandyBox,
+      );
 
   String get location => GoRouteData.$location(
         '/catch-game',
       );
 
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: $extra);
 
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: $extra);
 
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $resultPageRoute => GoRouteData.$route(
@@ -116,7 +119,7 @@ RouteBase get $resultPageRoute => GoRouteData.$route(
 
 extension $ResultPageRouteExtension on ResultPageRoute {
   static ResultPageRoute _fromState(GoRouterState state) => ResultPageRoute(
-        state.extra as CandyBox,
+        state.extra as GameResult,
       );
 
   String get location => GoRouteData.$location(
