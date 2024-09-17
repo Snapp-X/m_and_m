@@ -47,7 +47,7 @@ The assembly of the M&M Mixer involves a series of steps designed to ensure both
    To communicate with the PCA9685 driver, we need to enbale the I2C interface on the Raspberry Pi.
 
 5. **Motor Wiring:**
-   You can follow a detailed video to connect the Raspberry Pi to the PCA9685 board and the servo motors. Proper wiring is essential. A helpful video guide can be found here: [Raspberry Pi and PCA9685](https://youtu.be/9jcEwn7GzNs?si=1oX7w1uAstdxEzZp)
+   You can follow a detailed sketch to connect the Raspberry Pi to the PCA9685 board and the servo motors. Proper wiring is essential. A helpful wiring diagram can be found here: [Raspberry Pi and PCA9685](https://github.com/Snapp-X/m_and_m/tree/main/assets/assembly/pi_pca9685.png)
 
 6. **Python Dbus Server Launch:**
    Finally, we initiate the Python Dbus server. This server plays a pivotal role in managing the communication between the Raspberry Pi and the hardware components, ensuring that the M&M Mixer performs flawlessly. Start the server with:
